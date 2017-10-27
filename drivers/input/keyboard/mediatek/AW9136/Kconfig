@@ -1,0 +1,7 @@
+#
+# Touchscreen driver configuration
+#
+if AW9136_SUPPORT
+
+
+endif

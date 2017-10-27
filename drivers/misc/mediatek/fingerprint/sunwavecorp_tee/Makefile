@@ -1,0 +1,10 @@
+ccflags-y += -I$(srctree)/drivers/spi/mediatek/mt6735
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/include
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/mt6735/include
+ccflags-y += -I$(srctree)/drivers/spi/mediatek/$(MTK_PLATFORM)
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/teei/V1.0/tz_vfs
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/tkcore/core/
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/fingerprint/
+obj-y += sf_ctl.o
+obj-y += sf_spi.o

@@ -1,0 +1,19 @@
+obj-y	+= fingerprint.o
+
+obj-$(CONFIG_FINGERPRINT_SUNWAVE_9551)	+=  sunwavecorp/
+obj-$(CONFIG_FINGERPRINT_CS15XX)	+=  cs15xx/
+obj-$(CONFIG_FINGERPRINT_MICROARRAY)	+=  microarray_v4.0.01/
+obj-$(CONFIG_FINGERPRINT_MICROARRAY_TEE)	+=  microarray_v4.0.01/
+obj-$(CONFIG_FINGERPRINT_SUNWAVECORP)	+=  sunwavecorp/
+obj-$(CONFIG_FINGERPRINT_GF_MINANF_368_1214)	+=  gf_minanf_368_1214/
+obj-$(CONFIG_FINGERPRINT_GF_GF5116M_1216)	+=  gf_gf5116m_1216/
+obj-$(CONFIG_FINGERPRINT_GOODIX_GF5216)	+=  goodix_gf5216/
+obj-$(CONFIG_FINGERPRINT_AFS120N)	+=  afs120n/
+obj-$(CONFIG_FINGERPRINT_CDFINGER)	+=  cdfinger/
+obj-$(CONFIG_FINGERPRINT_MICROARRAY_A80T)	+=  microarray_v4.0.01/
+obj-$(CONFIG_FINGERPRINT_MICROARRAY_A80T_TEE)	+=  microarray_v4.0.01/
+obj-$(CONFIG_FINGERPRINT_SUNWAVECORP_TEE)	+=  sunwavecorp_tee/
+obj-$(CONFIG_FINGERPRINT_SUNWAVE_TEE)	+=  sunwavecorp_tee/
+obj-$(CONFIG_FINGERPRINT_DFS747)	+=  dfs747/
+ccflags-y += -I$(srctree)/drivers/spi/mediatek/mt6755
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/tkcore/core/

@@ -1,0 +1,4 @@
+config FINGERPRINT_CS15XX
+	bool "FINGERPRINT_CS15XX"
+	default n
+

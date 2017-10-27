@@ -1,0 +1,4 @@
+
+config FINGERPRINT_GF_GF5116M_1216
+        bool "FINGERPRINT_GF_GF516M_1216"
+        default n

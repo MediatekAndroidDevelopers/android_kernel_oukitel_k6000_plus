@@ -1,0 +1,23 @@
+# Copyright (C) MicroArray  
+# MicroArray Fprint Driver Code
+# Kconfig
+# Date: 2016-10-12
+# Version: v4.0.01 
+# Author: guq
+# Contact: guq@microarray.com.cn
+
+config FINGERPRINT_MICROARRAY
+        bool "FINGERPRINT_MICROARRAY"
+        default n
+	
+config FINGERPRINT_MICROARRAY_A80T
+        bool "FINGERPRINT_MICROARRAY_A80T"
+        default n
+
+config FINGERPRINT_MICROARRAY_TEE
+        bool "FINGERPRINT_MICROARRAY_TEE"
+        default n
+
+config FINGERPRINT_MICROARRAY_A80T_TEE
+        bool "FINGERPRINT_MICROARRAY_A80TEE"
+        default n

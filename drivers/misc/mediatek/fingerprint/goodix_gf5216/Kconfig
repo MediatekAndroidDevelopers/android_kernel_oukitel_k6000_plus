@@ -1,0 +1,4 @@
+
+config FINGERPRINT_GOODIX_GF5216
+        bool "FINGERPRINT_GOODIX_GF5216"
+        default n

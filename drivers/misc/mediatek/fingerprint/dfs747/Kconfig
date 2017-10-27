@@ -1,0 +1,4 @@
+
+config FINGERPRINT_DFS747
+        bool "FINGERPRINT_DFS747"
+        default n

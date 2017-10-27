@@ -1,0 +1,14 @@
+config HCT_FINGERPRINT_SUPPORT
+  bool "HCT_FINGERPRINT_SUPPORT"
+  default n
+
+source "drivers/misc/mediatek/fingerprint/cs15xx/Kconfig"
+source "drivers/misc/mediatek/fingerprint/microarray_v4.0.01/Kconfig"
+source "drivers/misc/mediatek/fingerprint/sunwavecorp/Kconfig"
+source "drivers/misc/mediatek/fingerprint/gf_minanf_368_1214/Kconfig"
+source "drivers/misc/mediatek/fingerprint/gf_gf5116m_1216/Kconfig"
+source "drivers/misc/mediatek/fingerprint/afs120n/Kconfig"
+source "drivers/misc/mediatek/fingerprint/cdfinger/Kconfig"
+source "drivers/misc/mediatek/fingerprint/goodix_gf5216/Kconfig"
+source "drivers/misc/mediatek/fingerprint/dfs747/Kconfig"
+source "drivers/misc/mediatek/fingerprint/sunwavecorp_tee/Kconfig"

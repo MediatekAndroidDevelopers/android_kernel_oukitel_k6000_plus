@@ -1,0 +1,5 @@
+config HCT_SECURITY_CHIP_SUPPORT
+  bool "CONFIG_HCT_SECURITY_CHIP_SUPPORT"
+  default n
+
+

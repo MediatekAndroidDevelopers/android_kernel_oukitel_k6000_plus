@@ -1,0 +1,4 @@
+
+config FINGERPRINT_SUNWAVECORP
+        bool "FINGERPRINT_SUNWAVECORP"
+        default n

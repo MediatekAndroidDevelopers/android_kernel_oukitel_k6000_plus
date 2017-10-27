@@ -1,0 +1,11 @@
+# Copyright (C) MicroArray  
+# MicroArray Fprint Driver Code
+# Kconfig
+# Date: 2016-10-12
+# Version: v4.0.01 
+# Author: guq
+# Contact: guq@microarray.com.cn
+
+config FINGERPRINT_GF_MINANF_368_1214
+        bool "FINGERPRINT_GF_MINANF_368_1214"
+        default n

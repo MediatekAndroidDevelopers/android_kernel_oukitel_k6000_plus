@@ -1,0 +1,9 @@
+
+config FINGERPRINT_SUNWAVECORP_TEE
+        bool "FINGERPRINT_SUNWAVECORP"
+        default n
+
+config FINGERPRINT_SUNWAVE_TEE
+        bool "FINGERPRINT_SUNWAVE"
+        default n
+

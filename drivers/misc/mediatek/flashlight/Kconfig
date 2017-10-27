@@ -1,0 +1,25 @@
+config MTK_FLASHLIGHT
+  bool CONFIG_MTK_FLASHLIGHT
+  default n
+  help
+    CONFIG_MTK_FLASHLIGHT
+
+config CUSTOM_KERNEL_FLASHLIGHT
+        string "CUSTOM_KERNEL_FLASHLIGHT"
+        help
+          Kernel space cameara flashlight driver. You can use this driver
+          choose cameara flashlight type.
+
+config HCT_FLASHLIGHT
+	string "HCT_FLASHLIGHT"
+
+config HCT_FLASHLIGHT_SUB_SUPPORT
+	bool CONFIG_HCT_FLASHLIGHT_SUB_SUPPORT
+	default n
+
+config HCT_FLASHLIGHT_SUB
+	string "HCT_FLASHLIGHT_SUB"
+
+source "drivers/misc/mediatek/flashlight/src/mt6755/Kconfig"
+
+

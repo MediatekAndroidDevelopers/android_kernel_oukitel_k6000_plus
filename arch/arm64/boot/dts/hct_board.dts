@@ -1,0 +1,1182 @@
+/ {
+
+hct_device: hct_device{
+	compatible				= "mediatek,hct_devices";
+};
+#if __HCT_BREATH_LIGHT_SUPPORT__
+	aw2013_dev: aw2013_dev{
+		compatible = "mediatek,aw2013_dev";
+	};
+#endif
+
+
+#if CONFIG_HCT_FINGERPRINT_SUPPORT
+	hct_finger: hct_finger{
+		compatible				= "mediatek,hct_finger";
+	};
+#endif
+
+	cust_accel@1 {
+		compatible				= "mediatek,cust_mxc400x";
+		i2c_num				    = <__HCT_GSENSOR_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT__MXC400X_SENSOR_ADDR__ 0 0 0>;
+		direction				= <__HCT__MXC400X_SENSOR_DIRECTION__>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+		firlen					= <0>;
+		is_batch_supported		= <__HCT__MXC400X_SENSOR_BATCH_SUPPORT__>;
+	};
+	cust_accel@2 {
+		compatible				= "mediatek,cust_bma156_new";
+		i2c_num				    = <__HCT_GSENSOR_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT__BMA156_NEW_SENSOR_ADDR__ 0 0 0>;
+		direction				= <__HCT__BMA156_NEW_SENSOR_DIRECTION__>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+		firlen					= <0>;
+		is_batch_supported		= <__HCT__BMA156_NEW_SENSOR_BATCH_SUPPORT__>;
+	};
+
+	cust_alsps@1 {
+		compatible				= "mediatek,cust_epl259x";
+		i2c_num					= <__HCT_ALSPS_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT_EPL259X_SENSOR_ADDR__ 0 0 0>;
+		polling_mode_ps			= <0>;
+		polling_mode_als		= <1>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+		als_level = <0 328 861 1377 3125 7721 7767 12621 23062 28430 33274 47116 57694 57694 65535>;
+		als_value = <0 133 304 502 1004 2005 3058 5005 8008 10010 12000 16000 20000 20000 20000 20000>;
+		ps_threshold_high		=  <__HCT_EPL259X_PS_THRELD_HIGH__>;
+		ps_threshold_low		=  <__HCT_EPL259X_PS_THRELD_LOW__>;
+		is_batch_supported_ps	= <0>;
+		is_batch_supported_als	= <0>;
+		};
+
+#if defined(CONFIG_MTK_STK3X1X_NEW)
+	cust_alsps@2 {
+		compatible = "mediatek,cust_stk3x1x";
+		i2c_num	= <__HCT_ALSPS_I2C_BUS_NUM__>;
+		i2c_addr = <__HCT_STK3X1X_SENSOR_ADDR__ 0 0 0>;
+		polling_mode_ps = <0>;
+		polling_mode_als = <1>;
+		power_id = <0xffff>;
+		power_vol = <0>;
+		als_level = <5 9 36 59 82 132 205 273 500 845 1136 1545 2364 4655 6982>;
+		als_value = <10 10 80 85 90 145 225 300 550 930 1250 1700 2600 5120 7680 10240>;
+		ps_threshold_high		=  <__HCT_HCT_STK3X1X_PS_THRELD_HIGH__>;
+		ps_threshold_low		=  <__HCT_HCT_STK3X1X_PS_THRELD_LOW__>;
+		is_batch_supported_ps	= <0>;
+		is_batch_supported_als	= <0>;
+		};
+#endif
+
+	cust_alsps@3 {
+		compatible				= "mediatek,cust_em3071x";
+		i2c_num				= <__HCT_ALSPS_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT_EM3071X_SENSOR_ADDR__ 0 0 0>;
+		polling_mode_ps			= <0>;
+		polling_mode_als		= <1>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+                als_level = <10  50  150   300   500  800  1000 1200 1500  2000  2500 3000 3600 4000 4095>;
+                als_value = <10 40 90  150 225 320  450  640 800  1280  1280  2600  2600 2600  10240 10240>;
+		ps_threshold_high		=  <__HCT_EM3071X_PS_THRELD_HIGH__>;
+		ps_threshold_low		=  <__HCT_EM3071X_PS_THRELD_LOW__>;
+		is_batch_supported_ps	= <0>;
+		is_batch_supported_als	= <0>;
+		};
+
+
+	cust_mag@1 {
+		compatible				= "mediatek,cust_bmm156_new";
+		i2c_num					= <__HCT_MSENSOR_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT__BMM156_NEW_SENSOR_ADDR__ 0 0 0>;
+		direction				= <__HCT__BMM156_NEW_SENSOR_DIRECTION__>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+		is_batch_supported		= <__HCT__BMM156_NEW_SENSOR_BATCH_SUPPORT__>;
+	};
+#ifdef CONFIG_MTK_BMG160_NEW
+	cust_gyro@1 {
+		compatible			= "mediatek,cust_bmg160_new";
+		i2c_num				= <__HCT_GYRO_I2C_BUS_NUM__>;
+		/* i2c_addr			= <__HCT__BMG160_NEW_SENSOR_ADDR__ 0 0 0>; */
+		direction			= <__HCT__BMG160_NEW_SENSOR_DIRECTION__>;
+		power_id			= <0xffff>;
+		power_vol			= <0>;
+		firlen				= <0>;
+		is_batch_supported		= <0>;
+	};
+#endif
+#ifdef CONFIG_MTK_BMI160_GYRO
+	cust_gyro@2 {
+		compatible			= "mediatek,cust_bmi160_gyro";
+		i2c_num				= <__HCT_GYRO_I2C_BUS_NUM__>;
+		/* i2c_addr			= <__HCT__BMI160_GYRO_SENSOR_ADDR__ 0 0 0>; */
+		direction			= <__HCT__BMI160_GYRO_SENSOR_DIRECTION__>;
+		power_id			= <0xffff>;
+		power_vol			= <0>;
+		firlen				= <0>;
+		is_batch_supported		= <0>;
+	};
+#endif
+#ifdef CONFIG_MTK_BMI160_ACC
+	cust_accel@3 {
+		compatible				= "mediatek,cust_bmi160_acc";
+		i2c_num				    = <__HCT_GSENSOR_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT__BMI160_ACC_SENSOR_ADDR__ 0 0 0>;
+		direction				= <__HCT__BMI160_ACC_SENSOR_DIRECTION__>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+		firlen					= <0>;
+		is_batch_supported		= <__HCT__BMI160_ACC_SENSOR_BATCH_SUPPORT__>;
+	};
+#endif
+#ifdef CONFIG_MTK_QMCX983
+	cust_mag@983 {
+		compatible				= "mediatek,cust_qmcX983";
+		i2c_num					= <__HCT_MSENSOR_I2C_BUS_NUM__>;
+		i2c_addr				= <__HCT_QMC7983_SENSOR_ADDR__ 0 0 0>;
+		direction				= <__HCT_QMC7983_SENSOR_DIRECTION__>;
+		power_id				= <0xffff>;
+		power_vol				= <0>;
+		is_batch_supported			= <0>;
+		};
+#endif
+};
+
+&i2c0 {
+#if defined(CONFIG_MTK_NCP1854_SUPPORT) && __HCT_SWITCH_CHARGER_I2C_BUS_NUM__ == 0
+	ncp1854@__HCT_NCP1854_CHARGER_ADDR__ {
+		compatible = "mediatek,ncp1854";
+		reg = <__HCT_NCP1854_CHARGER_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#ifdef CONFIG_TOUCHSCREEN_MTK_LU2X3X
+	cap_touch@0xe {
+		compatible = "mediatek,cap_touch_lu2x3x";
+		reg = <0xe>;
+		status = "okay";
+	};
+#endif
+
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_3402
+	cap_touch@0x20{
+		compatible = "mediatek,cap_touch_synapty";
+		reg = <0x20>;
+		status = "okay";
+	};
+#endif
+
+#ifdef CONFIG_TOUCHSCREEN_HIMAX_CHIPSET
+	cap_touch@0x48{
+		compatible = "mediatek,cap_himax_touch";
+		reg = <0x48>;
+		status = "okay";
+	};
+#endif
+
+#if defined(__HCT_CTP_MSG5846_SENSOR_ADDR__)
+			cap_touch@__HCT_CTP_MSG5846_SENSOR_ADDR__ {
+			compatible = "mediatek,cap_msg5846_touch";
+			reg = <__HCT_CTP_MSG5846_SENSOR_ADDR__>;
+			status = "okay";
+	};
+#endif
+
+#if defined(__HCT_CTP_FT_ALL_SENSOR_ADDR__)
+	cap_touch@__HCT_CTP_FT_ALL_SENSOR_ADDR__ {
+		compatible = "mediatek,cap_ft_all";
+		reg = <__HCT_CTP_FT_ALL_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_OZ115_SUPPORT && (__HCT_SWITCH_CHARGER_SUB_I2C_BUS_NUM__==0)
+        oz115_sub@0X10{
+		compatible = "o2micro,oz115_sub";
+		reg = <0X10>;
+		status = "okay";
+	};
+#endif
+};
+&i2c1 {
+#if defined(CONFIG_MTK_NCP1854_SUPPORT) && __HCT_SWITCH_CHARGER_I2C_BUS_NUM__ == 1
+	ncp1854@__HCT_NCP1854_CHARGER_ADDR__ {
+		compatible = "mediatek,ncp1854";
+		reg = <__HCT_NCP1854_CHARGER_ADDR__>;
+		status = "okay";
+	};
+#endif
+#if CONFIG_MTK_MXC400X_NEW
+	gsensor@__HCT__MXC400X_SENSOR_ADDR__ {
+		compatible = "mediatek,mxc400x";
+		reg = <__HCT__MXC400X_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_BMA255_NEW
+	gsensor@__HCT__BMA156_NEW_SENSOR_ADDR__ {
+		compatible = "mediatek,bma156_new";
+		reg = <__HCT__BMA156_NEW_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_BMM150_NEW
+	msensor@__HCT__BMM156_NEW_SENSOR_ADDR__ {
+		compatible = "mediatek,bmm156_new";
+		reg = <__HCT__BMM156_NEW_SENSOR_ADDR__>;
+		status = "okay";
+	};	
+#endif
+	
+#if CONFIG_MTK_EPL259X				
+	alsps@__HCT_EPL259X_SENSOR_ADDR__ {
+		compatible = "mediatek,epl259x";
+		reg = <__HCT_EPL259X_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_EM3071X
+	alsps@__HCT_EM3071X_SENSOR_ADDR__ {
+		compatible = "mediatek,em3071x";
+		reg = <__HCT_EM3071X_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_STK3X1X_NEW
+	alsps@__HCT_STK3X1X_SENSOR_ADDR__ {
+		compatible = "mediatek,stk3x1x";
+		reg = <__HCT_STK3X1X_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_BMG160_NEW
+	gyro@__HCT__BMG160_NEW_SENSOR_ADDR__ {
+		compatible = "mediatek,bmg160_new";
+		reg = <__HCT__BMG160_NEW_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+
+
+#if CONFIG_MTK_BMI160_ACC
+	gsensor@__HCT__BMI160_ACC_SENSOR_ADDR__ {
+		compatible = "mediatek,bmi160_acc";
+		reg = <__HCT__BMI160_ACC_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_BMI160_GYRO	
+	gyro@__HCT__BMI160_GYRO_SENSOR_ADDR__ {
+		compatible = "mediatek,bmi160_gyro";
+		reg = <__HCT__BMI160_GYRO_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_MTK_QMCX983
+	msensor@__HCT_QMC7983_SENSOR_ADDR__ {
+		compatible = "mediatek,qmcX983";
+		reg = <__HCT_QMC7983_SENSOR_ADDR__>;
+		status = "okay";
+	};
+#endif
+	
+};
+
+&i2c2 {
+#if defined(CONFIG_MTK_NCP1854_SUPPORT) && __HCT_SWITCH_CHARGER_I2C_BUS_NUM__ == 2
+	ncp1854@__HCT_NCP1854_CHARGER_ADDR__ {
+		compatible = "mediatek,ncp1854";
+		reg = <__HCT_NCP1854_CHARGER_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+};
+
+&i2c3 {
+#if defined(CONFIG_MTK_NCP1854_SUPPORT) && __HCT_SWITCH_CHARGER_I2C_BUS_NUM__ == 3
+	ncp1854@__HCT_NCP1854_CHARGER_ADDR__ {
+		compatible = "mediatek,ncp1854";
+		reg = <__HCT_NCP1854_CHARGER_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+#if CONFIG_USB_C_SWITCH_PI5USB30216A	
+	usb_type_c_pi5usb@__HCT_TYPEC_PI5USB_ADDR__ {
+		compatible = "mediatek,usb_type_c_pi5usb";
+		reg = <__HCT_TYPEC_PI5USB_ADDR__>;
+		status = "okay";
+	};
+#endif
+#if CONFIG_USB_C_SWITCH_PI5USB30216C	
+	usb_type_c_pi5usb@__HCT_TYPEC_PI5USB_ADDR__ {
+		compatible = "mediatek,usb_type_c_pi5usb";
+		reg = <__HCT_TYPEC_PI5USB_ADDR__>;
+		status = "okay";
+	};
+#endif
+#if __HCT_BREATH_LIGHT_SUPPORT__
+	aw2013@__HCT_BREATHLIGHT_AW2013_ADDR__ {
+		compatible = "mediatek,aw2013_i2c";
+		reg = <__HCT_BREATHLIGHT_AW2013_ADDR__>;
+		status = "okay";
+	};
+#endif
+
+};
+
+#ifdef CONFIG_OZ115_SUPPORT
+&I2C(__HCT_SWITCH_CHARGER_I2C_BUS_NUM__){
+        oz115@0X10{
+		compatible = "o2micro,oz115";
+		reg = <0X10>;
+                chg_en_gpio = <__HCT_GPIO_OZ115_RST_PIN__>;
+		status = "okay";
+	};		
+};
+#endif
+
+
+#ifdef CONFIG_AW9136_SUPPORT
+// add by zz
+	&I2C(__HCT_AW9136_TS_I2C_BUS_NUM__) {
+		aw9136@__HCT_AW9136_TS_ADDR__{
+			compatible = "mediatek,aw9136_ts";
+			reg = <__HCT_AW9136_TS_ADDR__>;
+
+			pinctrl-names = "aw9136_int_as_eint","aw9136_pdn_out0","aw9136_pdn_out1";
+			pinctrl-0 = <&CTP_pins_aw9136_int_as_eint>;
+			pinctrl-1 = <&CTP_pins_aw9136_pdn_out0>;
+			pinctrl-2 = <&CTP_pins_aw9136_pdn_out1>;
+
+			interrupt-parent = <&eintc>;
+			interrupts = <__HCT_CTP_AW9136_INT_NUM__ IRQ_TYPE_LEVEL_LOW>;
+			debounce = <__HCT_CTP_AW9136_INT_NUM__ 0>;
+			status = "okay";		
+		};
+	};
+
+	/* this pin defined is aw9136 start*/
+	&pio{
+		CTP_pins_aw9136_int_as_eint: aw9136int@5{
+		#if __HCT_AW9136_INT_PINNUX__
+				pins_cmd_dat {
+					pins = <__HCT_AW9136_INT_PINNUX__>;
+					slew-rate = <0>;
+					bias-pull-up = <00>;
+				};
+		#endif
+		};
+
+		CTP_pins_aw9136_pdn_out0: aw9136_pdn_out@0 {
+		#if __HCT_GPIO_AW9136_PDN_PINMUX__
+		    pins_cmd_dat {
+				pins = <__HCT_GPIO_AW9136_PDN_PINMUX__>;
+				slew-rate = <1>;
+				output-low;
+			};
+		#endif
+		};
+
+		CTP_pins_aw9136_pdn_out1: aw9136_pdn_out@1 {
+		#if __HCT_GPIO_AW9136_PDN_PINMUX__
+		    pins_cmd_dat {
+				pins = <__HCT_GPIO_AW9136_PDN_PINMUX__>;
+				slew-rate = <1>;
+				output-high;
+			};
+		#endif
+		};
+	};	
+
+/* this pin defined is aw9136 end*/
+#endif  // CONFIG_AW9136_SUPPORT end
+
+&pio {
+/* CTP GPIO standardization */
+	ctp_pins_eint_as_int_bias_disable: toucheint_bias_dis{
+			pins_cmd_dat {
+				pins = <__HCT_CTP_EINT_ENT_PINNUX__>;
+				slew-rate = <0>;
+				bias-disable;
+			};
+	};
+
+/* flashlight GPIO standardization */
+	flashlight_pins_en0: flashlight_en@0 {
+#if 0
+	    pins_cmd_dat {
+			pins = <PUNMUX_GPIO_NONE_FUNC_NONE>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	flashlight_pins_en1: flashlight_en@1 {
+#if 0
+	    pins_cmd_dat {
+			pins = <PUNMUX_GPIO_NONE_FUNC_NONE>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+	flashlight_pins_as_pwm: flashlight_as_pwm {
+#ifdef CONFIG_FLASHLIGHT_SGM3785
+	    pins_cmd_dat {
+			pins = <__HCT_SGM3785_ENM_GPIO_AS_PWM_PIN__>;
+			slew-rate = <1>;
+		};
+#endif
+	};
+	flashlight_pins_pwm0: flashlight_pwm@0 {
+#ifdef CONFIG_FLASHLIGHT_SGM3785
+	    pins_cmd_dat {
+			pins = <MTK_PIN_NO(__HCT_SGM3785_ENM_GPIO_NUM__)>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	flashlight_pins_pwm1: flashlight_pwm@1 {
+#ifdef CONFIG_FLASHLIGHT_SGM3785
+	    pins_cmd_dat {
+			pins = <MTK_PIN_NO(__HCT_SGM3785_ENM_GPIO_NUM__)>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+/* flashlight SUB GPIO standardization */	
+	flashlight_pins_sub_en0: flashlight_sub_en@0 {
+#if 0
+	    pins_cmd_dat {
+			pins = <PUNMUX_GPIO_NONE_FUNC_NONE>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	flashlight_pins_sub_en1: flashlight_sub_en@1 {
+#if 0
+	    pins_cmd_dat {
+			pins = <PUNMUX_GPIO_NONE_FUNC_NONE>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	flashlight_sub_pins_as_pwm: flashlight_sub_as_pwm {
+#ifdef CONFIG_FLASHLIGHT_SUB_PWM
+	    pins_cmd_dat {
+			pins = <__HCT_FLASHLIGHT_SUB_GPIO_PWM_AS_PWM_PIN__>;
+			slew-rate = <1>;
+		};
+#endif
+	};
+	flashlight_sub_pins_pwm0: flashlight_sub_pwm@0 {
+#ifdef CONFIG_FLASHLIGHT_SUB_PWM
+	    pins_cmd_dat {
+			pins = <MTK_PIN_NO(__HCT_FLASHLIGHT_SUB_GPIO_EN_NUM__)>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	flashlight_sub_pins_pwm1: flashlight_sub_pwm@1 {
+#ifdef CONFIG_FLASHLIGHT_SUB_PWM
+	    pins_cmd_dat {
+			pins = <MTK_PIN_NO(__HCT_FLASHLIGHT_SUB_GPIO_EN_NUM__)>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	flashlight_pins_default: flashlightdefault {
+	};
+
+};
+
+&flashlight {
+#ifdef CONFIG_FLASHLIGHT_SGM3785
+
+	fl-ENF-gpio = <__HCT_SGM3785_ENF_GPIO_NUM__>;
+	fl-ENM-gpio = <__HCT_SGM3785_ENM_GPIO_NUM__>;
+	fl-flash-duty = <__HCT_SGM3785_PWM_F_DUTY__>;
+	fl-torch-duty = <__HCT_SGM3785_PWM_T_DUTY__>;
+#endif
+#ifdef CONFIG_FLASHLIGHT_AW3641E
+	fl-en-gpio = <__HCT_AW3641E_GPIO_EN_NUM__>;
+	fl-mode-gpio = <__HCT_AW3641E_GPIO_MODE_NUM__>;
+#endif
+#ifdef CONFIG_FLASHLIGHT_SUB_PWM
+	fl-sub-en-gpio = <__HCT_FLASHLIGHT_SUB_GPIO_EN_NUM__>;
+	fl-sub-flash-duty = <__HCT_FLASHLIGHT_SUB_PWM_F_DUTY__>;
+	fl-sub-torch-duty = <__HCT_FLASHLIGHT_SUB_PWM_T_DUTY__>;
+#endif
+	pinctrl-names = "default", "flashlight_en0", "flashlight_en1", "flashlight_as_pwm", "flashlight_pwm0", "flashlight_pwm1",
+			"flashlight_sub_en0", "flashlight_sub_en1", "flashlight_sub_as_pwm", "flashlight_sub_pwm0", "flashlight_sub_pwm1";
+	pinctrl-0 = <&flashlight_pins_default>;
+	pinctrl-1 = <&flashlight_pins_en0>;
+	pinctrl-2 = <&flashlight_pins_en1>;
+	pinctrl-3 = <&flashlight_pins_as_pwm>;
+	pinctrl-4 = <&flashlight_pins_pwm0>;
+	pinctrl-5 = <&flashlight_pins_pwm1>;
+	pinctrl-6 = <&flashlight_pins_sub_en0>;
+	pinctrl-7 = <&flashlight_pins_sub_en1>;
+	pinctrl-8 = <&flashlight_sub_pins_as_pwm>;
+	pinctrl-9 = <&flashlight_sub_pins_pwm0>;
+	pinctrl-10 = <&flashlight_sub_pins_pwm1>;
+	status = "okay";
+
+};
+/* flashlight GPIO end */
+
+
+#if __HCT_HALL_SUPPORT__
+&pio {
+/* Kpd_slide pin*/
+	kpd_slide_pin_default:kpd_slide_default{
+	};
+	kpd_slide_pin_eint_as_int:kpd_slide_pin_def{
+	    pins_cmd_dat {
+			pins = <__HCT_KPD_SLIDE_EINT_PIN__>;
+			slew-rate = <0>;/*direction 0:in, 1:out*/
+			bias-disable;
+		};
+	};
+};
+
+&kpd_slide {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_HALL_EINT_PIN_NUM__ IRQ_TYPE_LEVEL_LOW>;
+	debounce = <__HCT_HALL_EINT_PIN_NUM__ 0>;
+	hall_gpio = <&pio __HCT_HALL_EINT_GPIO_NUM__ 0>;
+	status = "okay";
+};
+
+&kpd_slide {
+	pinctrl-names = "default", "kpd_slide_as_int";
+	pinctrl-0 = <&kpd_slide_pin_default>;
+	pinctrl-1 = <&kpd_slide_pin_eint_as_int>;
+	status = "okay";
+};
+#endif
+
+#if CONFIG_USB_C_SWITCH_PI5USB30216A
+&pio {
+/* typec pin*/
+	typec_pin_default:typec_default{
+	};
+	typec_pin_eint_as_int:typec_pin_eint_as_int_def{
+	    pins_cmd_dat {
+			pins = <__HCT_TYPEC_EINT_PIN__>;
+			slew-rate = <0>;/*direction 0:in, 1:out*/
+//			bias-disable;
+			bias-pull-up = <00>;
+		};
+	};
+	typec_pin_usb_id:typec_pin_usb_id_def{
+	    pins_cmd_dat {
+			pins = <__HCT_TYPEC_USB_ID_PIN__>;
+			slew-rate = <0>;/*direction 0:in, 1:out*/
+//			bias-disable;
+			bias-pull-up = <00>;
+		};
+	};
+};
+&usb_c_pinctrl {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_TYPEC_EINT_PIN_NUM__ IRQ_TYPE_LEVEL_LOW>;
+	debounce = <__HCT_TYPEC_EINT_PIN_NUM__ 0>;
+	typec_usbid_gpio = <&pio __HCT_TYPEC_USB_ID_GPIO_NUM__ 0>;
+	pinctrl-names = "default", "typec_as_int", "typec_usb_id";
+	pinctrl-0 = <&typec_pin_default>;
+	pinctrl-1 = <&typec_pin_eint_as_int>;
+	pinctrl-2 = <&typec_pin_usb_id>;
+	status = "okay";
+};
+
+&usb_c_id {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_TYPEC_USBID_EINT_PIN_NUM__ IRQ_TYPE_LEVEL_LOW>;
+	debounce = <__HCT_TYPEC_USBID_EINT_PIN_NUM__ 0>;
+	status = "okay";
+};
+#endif
+
+#if CONFIG_USB_C_SWITCH_PI5USB30216C	
+&pio {
+/* typec pin*/
+	typec_pin_default:typec_default{
+	};
+	typec_pin_eint_as_int:typec_pin_eint_as_int_def{
+	    pins_cmd_dat {
+			pins = <__HCT_TYPEC_EINT_PIN__>;
+			slew-rate = <0>;/*direction 0:in, 1:out*/
+//			bias-disable;
+			bias-pull-up = <00>;
+		};
+	};
+	typec_pin_usb_id:typec_pin_usb_id_def{
+	    pins_cmd_dat {
+			pins = <__HCT_TYPEC_USB_ID_PIN__>;
+			slew-rate = <0>;/*direction 0:in, 1:out*/
+//			bias-disable;
+			bias-pull-up = <00>;
+		};
+	};
+};
+&usb_c_pinctrl {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_TYPEC_EINT_PIN_NUM__ IRQ_TYPE_LEVEL_LOW>;
+	debounce = <__HCT_TYPEC_EINT_PIN_NUM__ 0>;
+	typec_usbid_gpio = <&pio __HCT_TYPEC_USB_ID_GPIO_NUM__ 0>;
+	pinctrl-names = "default", "typec_as_int", "typec_usb_id";
+	pinctrl-0 = <&typec_pin_default>;
+	pinctrl-1 = <&typec_pin_eint_as_int>;
+	pinctrl-2 = <&typec_pin_usb_id>;
+	status = "okay";
+};
+
+&usb_c_id {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_TYPEC_USBID_EINT_PIN_NUM__ IRQ_TYPE_LEVEL_LOW>;
+	debounce = <__HCT_TYPEC_USBID_EINT_PIN_NUM__ 0>;
+	status = "okay";
+};
+#endif
+
+#if __HCT_BREATH_LIGHT_SUPPORT__
+&pio {
+	aw2013_pin_default:aw2013_default{
+	};
+	aw2013_pins_ldo0: aw2013_ldo@0 {
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_AW2013_LDO_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+	aw2013_pins_ldo1: aw2013_ldo@1 {
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_AW2013_LDO_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};};
+
+&aw2013_dev {
+	pinctrl-names = "default", "state_aw2013_low", "state_aw2013_high";
+	pinctrl-0 = <&aw2013_pin_default>;
+	pinctrl-1 = <&aw2013_pins_ldo0>;
+	pinctrl-2 = <&aw2013_pins_ldo1>;
+	status = "okay";
+};
+#endif
+
+&mtk_disp {
+	pinctrl-names = "default", "lcm_rest_en0", "lcm_rest_en1","lcm_power_dm_en0","lcm_power_dm_en1","lcm_power_dp_en0","lcm_power_dp_en1",
+			"lcm_power_enn0","lcm_power_enn1","lcm_power_enp0","lcm_power_enp1";
+	pinctrl-0 = <&lcm_pins_default>;
+	pinctrl-1 = <&lcm_rest_en0>;
+	pinctrl-2 = <&lcm_rest_en1>;
+	pinctrl-3 = <&lcm_power_dm_en0>;
+	pinctrl-4 = <&lcm_power_dm_en1>;
+	pinctrl-5 = <&lcm_power_dp_en0>;
+	pinctrl-6 = <&lcm_power_dp_en1>;
+	pinctrl-7 = <&lcm_power_enn0>;
+	pinctrl-8 = <&lcm_power_enn1>;
+	pinctrl-9 = <&lcm_power_enp0>;
+	pinctrl-10 = <&lcm_power_enp1>;
+};
+
+
+#if CONFIG_HCT_FINGERPRINT_SUPPORT
+
+
+&hct_finger{
+	pinctrl-names = "default", "finger_power_en0","finger_power_en1","finger_reset_en0","finger_reset_en1","finger_spi0_mi_as_spi0_mi","finger_spi0_mi_as_gpio",
+                          "finger_spi0_mo_as_spi0_mo","finger_spi0_mo_as_gpio","finger_spi0_clk_as_spi0_clk","finger_spi0_clk_as_gpio","finger_spi0_cs_as_spi0_cs",
+                          "finger_spi0_cs_as_gpio","finger_int_as_int","finger_eint_en0","finger_eint_en1","finger_eint_en2","finger_power_18v_en0","finger_power_18v_en1";
+	pinctrl-0 = <&finger_pins_default>;
+	pinctrl-1 = <&finger_power_en0>;
+	pinctrl-2 = <&finger_power_en1>;
+	pinctrl-3 = <&finger_reset_en0>;
+	pinctrl-4 = <&finger_reset_en1>;
+	pinctrl-5 = <&finger_spi0_mi_as_spi0_mi>;
+	pinctrl-6 = <&finger_spi0_mi_as_gpio>;
+	pinctrl-7 = <&finger_spi0_mo_as_spi0_mo>;
+	pinctrl-8 = <&finger_spi0_mo_as_gpio>;
+	pinctrl-9 = <&finger_spi0_clk_as_spi0_clk>;
+	pinctrl-10= <&finger_spi0_clk_as_gpio>;
+	pinctrl-11= <&finger_spi0_cs_as_spi0_cs>;
+	pinctrl-12= <&finger_spi0_cs_as_gpio>;
+	pinctrl-13= <&finger_int_as_int>;
+	pinctrl-14= <&finger_eint_en0>;
+	pinctrl-15= <&finger_eint_en1>;
+	pinctrl-16= <&finger_eint_en2>;
+	pinctrl-17= <&finger_power_18v_en0>;
+	pinctrl-18= <&finger_power_18v_en1>;
+};
+&hct_finger {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_FINGERPRINT_EINT_EN_PIN_NUM__ IRQ_TYPE_EDGE_RISING>;
+	debounce = <__HCT_FINGERPRINT_EINT_EN_PIN_NUM__ 0>;
+	status = "okay";
+};
+#endif
+
+&pio {
+/*******************finger pin start ****************/
+#if CONFIG_HCT_FINGERPRINT_SUPPORT
+	finger_pins_default:finger_pins_default{
+	};
+	finger_power_en0:finger_power_en@0{
+		    pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_POWER_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+	finger_power_en1:finger_power_en@1{
+		    pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_POWER_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+	finger_reset_en0:finger_reset_en@0{
+		    pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_RESET_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+	finger_reset_en1:finger_reset_en@1{
+		    pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_RESET_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+	finger_spi0_mi_as_spi0_mi:finger_spi0_mi_as_spi0_mi@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO95__FUNC_SPI0_MI>;
+			slew-rate = <0>;
+			bias-disable;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_mi_as_gpio:finger_spi0_mi_as_gpio@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO95__FUNC_GPIO95>;
+			slew-rate = <0>;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_mo_as_spi0_mo:finger_spi0_mo_as_spi0_mo@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO97__FUNC_SPI0_MO>;
+			slew-rate = <1>;
+			bias-disable;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_mo_as_gpio:finger_spi0_mo_as_gpio@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO97__FUNC_GPIO97>;
+			slew-rate = <1>;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_clk_as_spi0_clk:finger_spi0_clk_as_spi0_clk@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO98__FUNC_SPI0_CLK>;
+			slew-rate = <1>;
+			bias-disable;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_clk_as_gpio:finger_spi0_clk_as_gpio@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO98__FUNC_GPIO98>;
+			slew-rate = <1>;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_cs_as_spi0_cs:finger_spi0_cs_as_spi0_cs@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO96__FUNC_SPI0_CSB>;
+			slew-rate = <1>;
+			bias-disable;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_spi0_cs_as_gpio:finger_spi0_cs_as_gpio@0{
+		    pins_cmd_dat {
+			pins = <PINMUX_GPIO96__FUNC_GPIO96>;
+			slew-rate = <1>;
+			output-low;
+			input-schmitt-enable = <0>;
+		};
+	};
+	finger_int_as_int: finger_int_as_int@0{
+			pins_cmd_dat {
+				pins = <__HCT_FINGERPRINT_EINT_PIN__>;
+				slew-rate = <0>;
+				bias-pull-up = <00>;
+			};
+	};
+
+	finger_eint_en0: finger_eint_en0 {
+		pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_EINT_PIN__>;
+			slew-rate = <0>;
+			bias-pull-down = <00>;
+		};
+	};
+	finger_eint_en1: finger_eint_en1 {
+		pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_EINT_PIN__>;
+			slew-rate = <0>;
+			bias-pull-up = <00>;
+		};
+	};
+	finger_eint_en2:finger_eint_en2 {
+		pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_EINT_PIN__>;
+			slew-rate = <0>;
+			bias-disable;
+		};
+	};
+
+	finger_power_18v_en0:finger_power_18v_en@0{
+#if __HCT_FINGERPRINT_POWER_18V_PIN__
+		    pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_POWER_18V_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	finger_power_18v_en1:finger_power_18v_en@1{
+#if __HCT_FINGERPRINT_POWER_18V_PIN__
+		    pins_cmd_dat {
+			pins = <__HCT_FINGERPRINT_POWER_18V_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+#endif
+/*******************finger pin end ****************/
+/*******************lcm pin start *****************/
+	lcm_pins_default: displcm_default {
+	};
+
+	lcm_rest_en0: lcm_reset_en@0 {
+	    pins_cmd_dat {
+			pins = <PINMUX_GPIO158__FUNC_GPIO158>;
+			slew-rate = <1>;
+			output-low;
+		};
+	};
+	lcm_rest_en1: lcm_reset_en@1 {
+	    pins_cmd_dat {
+			pins = <PINMUX_GPIO158__FUNC_GPIO158>;
+			slew-rate = <1>;
+			output-high;
+		};
+	};
+
+	lcm_power_dm_en0: lcm_power_dm_en@0 {
+#if __HCT_GPIO_LCM_POWER_DM_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_DM_PINMUX__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	lcm_power_dm_en1: lcm_power_dm_en@1 {
+#if __HCT_GPIO_LCM_POWER_DM_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_DM_PINMUX__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	lcm_power_dp_en0: lcm_power_dp_en@0 {
+#if __HCT_GPIO_LCM_POWER_DP_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_DP_PINMUX__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+
+	lcm_power_dp_en1: lcm_power_dp_en@1 {
+#if __HCT_GPIO_LCM_POWER_DP_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_DP_PINMUX__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	lcm_power_enn0: lcm_power_enn@0 {
+#if __HCT_GPIO_LCM_POWER_ENN_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_ENN_PINMUX__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	lcm_power_enn1: lcm_power_enn@1 {
+#if __HCT_GPIO_LCM_POWER_ENN_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_ENN_PINMUX__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	lcm_power_enp0: lcm_power_enp@0 {
+#if __HCT_GPIO_LCM_POWER_ENP_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_ENP_PINMUX__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+
+	lcm_power_enp1: lcm_power_enp@1 {
+#if __HCT_GPIO_LCM_POWER_ENP_PINMUX__==PUNMUX_GPIO_NONE_FUNC_NONE
+#else
+	    pins_cmd_dat {
+			pins = <__HCT_GPIO_LCM_POWER_ENP_PINMUX__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+/*******************lcm pin end********************/
+
+
+
+};
+
+
+
+#if (__HCT_RED_LED_MODE__ == __HCT_MT65XX_LED_MODE_GPIO__) || (__HCT_GREEN_LED_MODE__ == __HCT_MT65XX_LED_MODE_GPIO__) || (__HCT_BLUE_LED_MODE__ == __HCT_MT65XX_LED_MODE_GPIO__) || (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == __HCT_MT65XX_LED_MODE_GPIO__) \
+  || (__HCT_RED_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__) || (__HCT_GREEN_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__) || (__HCT_BLUE_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__) || (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)  
+
+&pio {
+	led_gpio_pin_default:led_gpio_default{
+	};
+
+	led_gpio_rgb_red0: led_gpio_rgb_red@0 {
+#if (__HCT_RED_LED_MODE__ == 2) ||  (__HCT_RED_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_RED_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	led_gpio_rgb_red1: led_gpio_rgb_red@1 {
+#if (__HCT_RED_LED_MODE__ == 2) ||  (__HCT_RED_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_RED_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	led_gpio_rgb_green0: led_gpio_rgb_green@0 {
+#if (__HCT_GREEN_LED_MODE__ == 2) || (__HCT_GREEN_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_GREEN_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	led_gpio_rgb_green1: led_gpio_rgb_green@1 {
+#if (__HCT_GREEN_LED_MODE__ == 2) || (__HCT_GREEN_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_GREEN_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	led_gpio_rgb_blue0: led_gpio_rgb_blue@0 {
+#if (__HCT_BLUE_LED_MODE__ == 2) || (__HCT_BLUE_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_BLUE_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	led_gpio_rgb_blue1: led_gpio_rgb_blue@1 {
+#if (__HCT_BLUE_LED_MODE__ == 2) || (__HCT_BLUE_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_BLUE_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+
+	led_gpio_kpdled0: led_gpio_kpdled@0 {
+#if (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == 2) || (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_KPDLED_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-low;
+		};
+#endif
+	};
+	led_gpio_kpdled1: led_gpio_kpdled@1 {
+#if (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == 2) || (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_KPDLED_GPIO_EN_PIN__>;
+			slew-rate = <1>;
+			output-high;
+		};
+#endif
+	};
+	led_rgb_red_pins_as_pwm: led_rgb_red_pins_as_pwm {
+#if (__HCT_RED_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_RED_GPIO_AS_PWM_PIN__>;
+			slew-rate = <1>;
+		};
+#endif
+	};
+	led_rgb_green_pins_as_pwm: led_rgb_green_pins_as_pwm {
+#if (__HCT_GREEN_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_GREEN_GPIO_AS_PWM_PIN__>;
+			slew-rate = <1>;
+		};
+#endif
+	};
+	led_rgb_blue_pins_as_pwm: led_rgb_blue_pins_as_pwm {
+#if (__HCT_BLUE_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_RGB_BLUE_GPIO_AS_PWM_PIN__>;
+			slew-rate = <1>;
+		};
+#endif
+	};
+	led_kpdled_pins_as_pwm: led_kpdled_pins_as_pwm {
+#if (__HCT_BUTTON_BACKLIGHT_LED_MODE__ == __HCT_MT65XX_LED_MODE_PWM__)
+	    pins_cmd_dat {
+			pins = <__HCT_KPDLED_GPIO_AS_PWM_PIN__>;
+			slew-rate = <1>;
+		};
+#endif
+	};
+};
+
+/{
+	led_gpio_dev {
+		compatible = "mediatek,led_gpio_dev";
+		pinctrl-names = "default", "state_led_gpio_rgb_red_low", "state_led_gpio_rgb_red_high",
+			"state_led_gpio_rgb_green_low", "state_led_gpio_rgb_green_high",
+			"state_led_gpio_rgb_blue_low", "state_led_gpio_rgb_blue_high",
+			"state_led_gpio_kpdled_low", "state_led_gpio_kpdled_high",
+			"state_led_rgb_red_pins_as_pwm", "state_led_rgb_green_pins_as_pwm",
+			"state_led_rgb_blue_pins_as_pwm", "state_kpdled_pins_as_pwm";
+		pinctrl-0 = <&led_gpio_pin_default>;
+		pinctrl-1 = <&led_gpio_rgb_red0>;
+		pinctrl-2 = <&led_gpio_rgb_red1>;
+		pinctrl-3 = <&led_gpio_rgb_green0>;
+		pinctrl-4 = <&led_gpio_rgb_green1>;
+		pinctrl-5 = <&led_gpio_rgb_blue0>;
+		pinctrl-6 = <&led_gpio_rgb_blue1>;
+		pinctrl-7 = <&led_gpio_kpdled0>;
+		pinctrl-8 = <&led_gpio_kpdled1>;
+		pinctrl-9 = <&led_rgb_red_pins_as_pwm>;
+		pinctrl-10 = <&led_rgb_green_pins_as_pwm>;
+		pinctrl-11 = <&led_rgb_blue_pins_as_pwm>;
+		pinctrl-12 = <&led_kpdled_pins_as_pwm>;
+		status = "okay";
+	};
+};
+#endif
+
+#if __HCT_HALL_SUPPORT__
+
+&pio {
+/* Kpd_slide pin*/
+	kpd_slide_pin_default:kpd_slide_default{
+	};
+	kpd_slide_pin_eint_as_int:kpd_slide_pin_def{
+	    pins_cmd_dat {
+			pins = <__HCT_KPD_SLIDE_EINT_PIN__>;
+			slew-rate = <0>;/*direction 0:in, 1:out*/
+			bias-pull-up= <00> ;
+		};
+	};
+};
+
+&kpd_slide {
+	interrupt-parent = <&eintc>;
+	interrupts = <__HCT_HALL_EINT_PIN_NUM__ IRQ_TYPE_LEVEL_LOW>;
+	debounce = <__HCT_HALL_EINT_PIN_NUM__ 0>;
+	hall_gpio = <&pio __HCT_HALL_EINT_GPIO_NUM__ 0>;
+	status = "okay";
+};
+
+&kpd_slide {
+	pinctrl-names = "default", "kpd_slide_as_int";
+	pinctrl-0 = <&kpd_slide_pin_default>;
+	pinctrl-1 = <&kpd_slide_pin_eint_as_int>;
+	status = "okay";
+};
+#endif

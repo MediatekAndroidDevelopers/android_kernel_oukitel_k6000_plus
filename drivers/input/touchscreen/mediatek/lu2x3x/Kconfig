@@ -1,0 +1,7 @@
+#
+# Touchscreen driver configuration
+#
+
+
+config LU2X3X_CONFIG
+	string "lu2x3x for Mediatek config"

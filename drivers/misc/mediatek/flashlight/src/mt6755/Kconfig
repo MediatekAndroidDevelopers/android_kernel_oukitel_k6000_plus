@@ -1,0 +1,17 @@
+config FLASHLIGHT_AW3641E
+	bool CONFIG_FLASHLIGHT_AW3641E
+	default n
+
+config FLASHLIGHT_SGM3785
+	bool FLASHLIGHT_SGM3785
+	default n
+	
+config FLASHLIGHT_SUB_GPIO
+	bool FLASHLIGHT_SUB_GPIO
+	default n
+	
+config FLASHLIGHT_SUB_PWM
+	bool FLASHLIGHT_SUB_PWM
+	default n
+	
+	
