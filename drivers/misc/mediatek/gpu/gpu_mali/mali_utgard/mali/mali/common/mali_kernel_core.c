@@ -1,11 +1,11 @@
 /*
- * This confidential and proprietary software may be used only as
- * authorised by a licensing agreement from ARM Limited
- * (C) COPYRIGHT 2007-2016 ARM Limited
- * ALL RIGHTS RESERVED
- * The entire notice above must be reproduced on all authorised
- * copies and copies may only be made to the extent permitted
- * by a licensing agreement from ARM Limited.
+ * Copyright (C) 2010-2016 ARM Limited. All rights reserved.
+ * 
+ * This program is free software and is provided to you under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation, and any use by you of this program is subject to the terms of such GNU licence.
+ * 
+ * A copy of the licence is included with the program, and can also be obtained from Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 #include "mali_kernel_common.h"
@@ -46,6 +46,10 @@
 #if defined(CONFIG_MALI_DMA_BUF_FENCE)
 #include <linux/fence.h>
 #endif
+
+#ifdef ENABLE_MTK_MEMINFO
+#include "mtk_gpu_meminfo.h"
+#endif /* ENABLE_MTK_MEMINFO */
 
 #define MALI_SHARED_MEMORY_DEFAULT_SIZE 0xffffffff
 
@@ -760,6 +764,11 @@ _mali_osk_errcode_t mali_initialize_subsystems(void)
 		return err;
 	}
 
+#ifdef ENABLE_MTK_MEMINFO
+	mtk_gpu_meminfo_init();
+	mtk_gpu_meminfo_reset();
+#endif /* ENABLE_MTK_MEMINFO */
+
 	/*Try to init gpu secure mode */
 	_mali_osk_gpu_secure_mode_init();
 
@@ -949,6 +958,10 @@ void mali_terminate_subsystems(void)
 	_mali_osk_gpu_secure_mode_deinit();
 
 	mali_memory_terminate();
+
+#ifdef ENABLE_MTK_MEMINFO
+	mtk_gpu_meminfo_remove();
+#endif /* ENABLE_MTK_MEMINFO */
 
 	mali_session_terminate();
 

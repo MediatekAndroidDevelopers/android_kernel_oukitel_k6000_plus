@@ -1,11 +1,11 @@
 /*
- * This confidential and proprietary software may be used only as
- * authorised by a licensing agreement from ARM Limited
- * (C) COPYRIGHT 2012-2016 ARM Limited
- * ALL RIGHTS RESERVED
- * The entire notice above must be reproduced on all authorised
- * copies and copies may only be made to the extent permitted
- * by a licensing agreement from ARM Limited.
+ * Copyright (C) 2012-2016 ARM Limited. All rights reserved.
+ * 
+ * This program is free software and is provided to you under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation, and any use by you of this program is subject to the terms of such GNU licence.
+ * 
+ * A copy of the licence is included with the program, and can also be obtained from Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 #include "mali_osk.h"
@@ -14,6 +14,10 @@
 #include "mali_ukk.h"
 #ifdef MALI_MEM_SWAP_TRACKING
 #include "mali_memory_swap_alloc.h"
+#endif
+#ifdef ENABLE_MTK_MEMINFO
+#include "mtk_gpu_meminfo.h"
+extern int g_mtk_gpu_total_memory_usage_in_pages_debugfs;
 #endif
 
 _MALI_OSK_LIST_HEAD(mali_sessions);
@@ -108,6 +112,9 @@ void mali_session_memory_tracking(_mali_osk_print_ctx *print_ctx)
 	u32 swap_pool_size;
 	u32 swap_unlock_size;
 #endif
+#ifdef ENABLE_MTK_MEMINFO
+    u32 mtk_kbase_gpu_meminfo_index = 0;
+#endif /* ENABLE_MTK_MEMINFO */
 
 	MALI_DEBUG_ASSERT_POINTER(print_ctx);
 	mali_session_lock();
@@ -132,9 +139,16 @@ void mali_session_memory_tracking(_mali_osk_print_ctx *print_ctx)
 				    (unsigned int)((atomic_read(&session->mali_mem_array[MALI_MEM_DMA_BUF])) * _MALI_OSK_MALI_PAGE_SIZE)
 				   );
 #endif
+#ifdef ENABLE_MTK_MEMINFO
+		mtk_gpu_meminfo_set(mtk_kbase_gpu_meminfo_index, session->pid, (atomic_read(&session->mali_mem_allocated_pages)));
+		mtk_kbase_gpu_meminfo_index++;
+#endif /* ENABLE_MTK_MEMINFO */
 	}
 	mali_session_unlock();
 	mali_mem_usage  = _mali_ukk_report_memory_usage();
+#ifdef ENABLE_MTK_MEMINFO
+    g_mtk_gpu_total_memory_usage_in_pages_debugfs = mali_mem_usage/4096;
+#endif /* ENABLE_MTK_MEMINFO */
 	total_mali_mem_size = _mali_ukk_report_total_memory_size();
 	_mali_osk_ctxprintf(print_ctx, "Mali mem usage: %u\nMali mem limit: %u\n", mali_mem_usage, total_mali_mem_size);
 #ifdef MALI_MEM_SWAP_TRACKING
