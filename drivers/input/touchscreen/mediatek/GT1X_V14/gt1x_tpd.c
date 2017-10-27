@@ -1007,9 +1007,6 @@ static int __init tpd_driver_init(void)
 {
 	GTP_INFO("Goodix touch panel driver init.");
 
-
-    if ((RECOVERY_BOOT == get_boot_mode()) || (META_BOOT == get_boot_mode()))   // important
-        return 0;
 	tpd_get_dts_info();
 
 	if (tpd_driver_add(&tpd_device_driver) < 0) {
