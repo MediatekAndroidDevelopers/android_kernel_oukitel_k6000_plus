@@ -14,7 +14,7 @@
 #include <asm/atomic.h>
 
 #include "hct_devices.h"
-#include "Cust_Memory_type.h"
+//#include "Cust_Memory_type.h"
 
 #define HCT_DEVICE "hct_device"
 #define HCT_VERSION "hct6755-66-n0-mp7-v1"

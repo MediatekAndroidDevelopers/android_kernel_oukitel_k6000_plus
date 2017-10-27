@@ -13,8 +13,8 @@
 #include "mt6755-pinfunc.h"
 #include <generated/autoconf.h>
 #include <generated/hct_auto_define_list.h>
-#include "hct_include/hct_project_all_config.h"
-#include "hct_include/hct_board_dts_config.h"
+#include <hct_include/hct_project_all_config.h>
+#include <hct_include/hct_board_dts_config.h>
 
 / {
 	model = "MT6755";
