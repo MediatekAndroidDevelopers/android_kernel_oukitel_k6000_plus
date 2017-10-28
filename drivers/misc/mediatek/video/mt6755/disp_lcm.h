@@ -14,7 +14,7 @@
 #ifndef _DISP_LCM_H_
 #define _DISP_LCM_H_
 #include "lcm_drv.h"
-#include <linux/hct_include/hct_project_all_config.h>
+
 #define MAX_LCM_NUMBER	2
 
 typedef struct {

@@ -1002,10 +1002,8 @@ static int setup_rdma_sec(DISP_MODULE_ENUM module, disp_ddp_path_config *pConfig
 			cmdqRecSecureEnablePortSecurity(handle, (1LL << cmdq_engine));
 			/* cmdqRecSecureEnableDAPC(handle, (1LL << cmdq_engine)); */
 
-			if (rdma_is_sec[rdma_idx] == 0) {
+			if (rdma_is_sec[rdma_idx] == 0)
 				DISPMSG("[SVP] switch rdma%d to sec\n", rdma_idx);
-				mdelay(3);
-			}
 			rdma_is_sec[rdma_idx] = 1;
 		} else {
 			if (rdma_is_sec[rdma_idx]) {

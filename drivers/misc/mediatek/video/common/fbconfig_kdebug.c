@@ -231,11 +231,14 @@ static int fbconfig_open(struct inode *inode, struct file *file)
 	pm_params->pLcm_drv = DISP_GetLcmDrv();
 	pm_params->pLcm_params = DISP_GetLcmPara();
 
-	if (pm_params->pLcm_params->lcm_if == LCM_INTERFACE_DSI_DUAL)
-		pm_params->dsi_id = PM_DSI_DUAL;
-	else if (pm_params->pLcm_params->lcm_if == LCM_INTERFACE_DSI1)
-		pm_params->dsi_id = PM_DSI1;
-	return 0;
+	if (pm_params->pLcm_params) {
+		if (pm_params->pLcm_params->lcm_if == LCM_INTERFACE_DSI_DUAL)
+			pm_params->dsi_id = PM_DSI_DUAL;
+		else if (pm_params->pLcm_params->lcm_if == LCM_INTERFACE_DSI1)
+			pm_params->dsi_id = PM_DSI1;
+		return 0;
+	} else
+		return -EINVAL;
 }
 
 
@@ -525,6 +528,10 @@ static long fbconfig_ioctl(struct file *file, unsigned int cmd, unsigned long ar
 		if (copy_ret_val != 0) {
 			pr_debug("fbconfig=>LCM_GET_ESD copy_from_user failed @line %d\n", __LINE__);
 			return -EFAULT;
+		}
+		if (esd_para.para_num <= 0) {
+			pr_debug("fbconfig=>LCM_GET_ESD para_num:%d < 0\n", esd_para.para_num);
+			return -1;
 		}
 		buffer = kzalloc(esd_para.para_num + 6, GFP_KERNEL);
 		if (buffer == NULL)

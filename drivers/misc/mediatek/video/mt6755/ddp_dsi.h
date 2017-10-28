@@ -202,7 +202,6 @@ extern "C" {
 	void DSI_ForceConfig(int forceconfig);
 	int DSI_set_roi(int x, int y);
 	int DSI_check_roi(void);
-	int dsi_enable_irq(DISP_MODULE_ENUM module, void *handle, unsigned int enable);
 
 #ifdef __cplusplus
 }

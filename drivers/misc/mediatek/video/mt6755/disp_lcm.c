@@ -448,7 +448,7 @@ int disp_lcm_resume(disp_lcm_handle *plcm)
 	}
 	return ret;
 }
-extern int disp_bls_set_backlight(int);
+
 int disp_lcm_set_backlight(disp_lcm_handle *plcm, void *handle, int level)
 {
 	LCM_DRIVER *lcm_drv = NULL;
@@ -456,15 +456,11 @@ int disp_lcm_set_backlight(disp_lcm_handle *plcm, void *handle, int level)
 
 	if (_is_lcm_inited(plcm)) {
 		lcm_drv = plcm->drv;
-		if (lcm_drv->set_backlight) {    // hct midify
-			lcm_drv->set_backlight(level);
+		if (lcm_drv->set_backlight_cmdq) {
+			lcm_drv->set_backlight_cmdq(handle, level);
 		} else {
-		#if 1
 			DISPERR("FATAL ERROR, lcm_drv->set_backlight is null\n");
 			ret = -1;
-		#else
-			disp_bls_set_backlight(level);
-		#endif
 		}
 	} else {
 		DISPERR("lcm_drv is null\n");

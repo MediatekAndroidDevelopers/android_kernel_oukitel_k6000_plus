@@ -90,11 +90,10 @@
 #include "mt_spm_sodi_cmdq.h"
 #include "mt_spm_reg.h"
 #include "mt_spm_idle.h"
+#include "layering_rule.h"
 
 #define FRM_UPDATE_SEQ_CACHE_NUM (DISP_INTERNAL_BUFFER_COUNT+1)
-#ifdef __HCT_DELAY_ONLY_FOR_DH_TD4300_ESDCHECK__
-int hct_globle_flags = 0;
-#endif
+
 static disp_internal_buffer_info *decouple_buffer_info[DISP_INTERNAL_BUFFER_COUNT];
 static disp_internal_buffer_info *freeze_buffer_info;/*freeze mode*/
 static disp_internal_buffer_info *gmo_decouple_buffer_info;
@@ -421,7 +420,7 @@ static int primary_show_basic_debug_info(struct disp_frame_cfg_t *cfg)
 	int i;
 	fpsEx fps;
 	char disp_tmp[20];
-	int dst_layer_id = 0;
+	unsigned int dst_layer_id = 0;
 	int bytes_per_pixel = 0;
 
 	dprec_logger_get_result_value(DPREC_LOGGER_RDMA0_TRANSFER_1SECOND, &fps);
@@ -446,13 +445,16 @@ static int primary_show_basic_debug_info(struct disp_frame_cfg_t *cfg)
 				dst_layer_id : cfg->input_cfg[i].layer_id;
 		}
 	}
-
-	bytes_per_pixel = cfg->input_cfg[dst_layer_id].src_fmt & 0xff;
-	dynamic_debug_msg_print((unsigned int)(unsigned long)cfg->input_cfg[dst_layer_id].src_phy_addr,
-				cfg->input_cfg[dst_layer_id].tgt_width,
-				cfg->input_cfg[dst_layer_id].tgt_height,
-				cfg->input_cfg[dst_layer_id].src_pitch * bytes_per_pixel,
-				bytes_per_pixel);
+	if (dst_layer_id < (ARRAY_SIZE(cfg->input_cfg))) {
+		bytes_per_pixel = cfg->input_cfg[dst_layer_id].src_fmt & 0xff;
+		dynamic_debug_msg_print((unsigned int)(unsigned long)cfg->input_cfg[dst_layer_id].src_phy_addr,
+					cfg->input_cfg[dst_layer_id].tgt_width,
+					cfg->input_cfg[dst_layer_id].tgt_height,
+					cfg->input_cfg[dst_layer_id].src_pitch * bytes_per_pixel,
+					bytes_per_pixel);
+	} else {
+		BUG();
+	}
 	return 0;
 }
 
@@ -3407,6 +3409,7 @@ int primary_display_init(char *lcm_name, unsigned int lcm_fps, int is_lcm_inited
 done:
 	primary_display_diagnose();
 	dst_module = _get_dst_module_by_lcm(pgc->plcm);
+	layering_rule_init();
 	_primary_path_unlock(__func__);
 	return ret;
 }
@@ -3703,9 +3706,6 @@ int primary_display_resume(void)
 	int use_cmdq, i;
 
 	DISPMSG("primary_display_resume begin\n");
-#ifdef __HCT_DELAY_ONLY_FOR_DH_TD4300_ESDCHECK__
-	hct_globle_flags = 1;	
-#endif
 	MMProfileLogEx(ddp_mmp_get_events()->primary_resume, MMProfileFlagStart, 0, 0);
 
 	_primary_path_lock(__func__);
@@ -3736,6 +3736,7 @@ int primary_display_resume(void)
 			LCM_PARAMS *lcm_param_cv = NULL;
 
 			lcm_param_cv = disp_lcm_get_params(pgc->plcm);
+			BUG_ON(IS_ERR_OR_NULL(lcm_param_cv));
 			DISPMSG("lcm_mode_status=%d, lcm_param_cv->dsi.mode %d\n",
 					lcm_mode_status, lcm_param_cv->dsi.mode);
 			if (lcm_param_cv->dsi.mode != CMD_MODE)
@@ -4463,7 +4464,7 @@ static int _config_ovl_input(struct disp_frame_cfg_t *cfg,
 		data_config->ovl_layer_dirty |= (1 << i);
 	}
 
-	overlap_layers = cfg->overlap_layer_num;
+	overlap_layers = HRT_GET_DVFS_LEVEL(cfg->overlap_layer_num);
 	data_config->overlap_layer_num = overlap_layers;
 
 	if (!_requestCondition(overlap_layers)) {
@@ -6638,29 +6639,6 @@ void restart_smart_ovl_nolock(void)
 
 }
 
-/*Now the normal display vsync is DDP_IRQ_RDMA0_DONE in vdo mode, but when enter TUI,
- *we must protect the rdma0, then, should
- * switch it to the DDP_IRQ_DSI0_FRAME_DONE.
- */
-int display_vsync_switch_to_dsi(unsigned int flg)
-{
-	if (!primary_display_is_video_mode())
-		return 0;
-
-	if (!flg) {
-		dpmgr_map_event_to_irq(pgc->dpmgr_handle, DISP_PATH_EVENT_IF_VSYNC,
-								DDP_IRQ_RDMA0_DONE);
-		dsi_enable_irq(DISP_MODULE_DSI0, NULL, 0);
-
-	} else {
-		dpmgr_map_event_to_irq(pgc->dpmgr_handle, DISP_PATH_EVENT_IF_VSYNC,
-								DDP_IRQ_DSI0_FRAME_DONE);
-		dsi_enable_irq(DISP_MODULE_DSI0, NULL, 1);
-	}
-
-	return 0;
-}
-
 int display_enter_tui(void)
 {
 
@@ -6689,13 +6667,7 @@ int display_enter_tui(void)
 
 	session_mode_backup = pgc->session_mode;
 
-	if (session_mode_backup == DISP_SESSION_RDMA_MODE) {
-		do_primary_display_switch_mode(DISP_SESSION_DIRECT_LINK_MODE, pgc->session_id, 0, NULL, 0);
-		session_mode_backup = DISP_SESSION_DIRECT_LINK_MODE;
-	}
-
 	do_primary_display_switch_mode(DISP_SESSION_DECOUPLE_MODE, pgc->session_id, 0, NULL, 0);
-	display_vsync_switch_to_dsi(1);
 
 	MMProfileLogEx(ddp_mmp_get_events()->tui, MMProfileFlagPulse, 0, 1);
 
@@ -6728,7 +6700,6 @@ int display_exit_tui(void)
 	/*DISP_REG_SET(NULL, DISP_REG_RDMA_INT_ENABLE, 0xffffffff);*/
 
 	restart_smart_ovl_nolock();
-	display_vsync_switch_to_dsi(0);
 	_primary_path_unlock(__func__);
 
 	MMProfileLogEx(ddp_mmp_get_events()->tui, MMProfileFlagEnd, 0, 0);
@@ -6840,8 +6811,7 @@ int display_freeze_mode(int enable, int need_lock)
 		}
 		primary_display_idlemgr_kick((char *)__func__, 0);
 		session_mode_backup = pgc->session_mode;
-		if (session_mode_backup == DISP_SESSION_DECOUPLE_MODE
-			|| session_mode_backup == DISP_SESSION_RDMA_MODE) {
+		if (session_mode_backup == DISP_SESSION_DECOUPLE_MODE) {
 			do_primary_display_switch_mode(DISP_SESSION_DIRECT_LINK_MODE,
 				pgc->session_id, 0, NULL, 0);
 			session_mode_backup = DISP_SESSION_DIRECT_LINK_MODE;

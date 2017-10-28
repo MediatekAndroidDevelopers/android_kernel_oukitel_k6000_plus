@@ -58,8 +58,8 @@ static int dsi_reg_op_debug;
 #define DSI_OUTREGBIT(cmdq, TYPE, REG, bit, value)  \
 	{\
 		do {\
-			TYPE r;\
-			TYPE v;\
+			TYPE r = {0};\
+			TYPE v = {0};\
 			if (cmdq) {\
 				*(unsigned int *)(&r) = ((unsigned int)0x00000000); \
 				r.bit = ~(r.bit);  \
@@ -131,7 +131,7 @@ static int dsi_reg_op_debug;
 
 #define MIPITX_OUTREGBIT(TYPE, REG, bit, value) {\
 		do {	\
-			TYPE r;\
+			TYPE r = {0};\
 			if (0) \
 				mt_reg_sync_writel(INREG32(&REG), &r); \
 			*(unsigned long *)(&r) = ((unsigned long)0x00000000);	  \
@@ -162,7 +162,7 @@ static int dsi_reg_op_debug;
 #define MIPITX_OUTREGBIT(TYPE, REG, bit, value)  \
 	{\
 		do {	\
-			TYPE r;\
+			TYPE r = {0};\
 			mt_reg_sync_writel(INREG32(&REG), &r);	  \
 			r.bit = value;	  \
 			MIPITX_OUTREG32(&REG, AS_UINT32(&r));	  \
@@ -361,8 +361,8 @@ DSI_STATUS DSI_DumpRegisters(DISP_MODULE_ENUM module, int level)
 static void _DSI_INTERNAL_IRQ_Handler(DISP_MODULE_ENUM module, unsigned int param)
 {
 	int i = 0;
-	DSI_INT_STATUS_REG status;
-	DSI_TXRX_CTRL_REG txrx_ctrl;
+	DSI_INT_STATUS_REG status = {0};
+	DSI_TXRX_CTRL_REG txrx_ctrl = {0};
 
 	for (i = DSI_MODULE_BEGIN(module); i <= DSI_MODULE_END(module); i++) {
 		status = *(PDSI_INT_STATUS_REG) & param;
@@ -538,7 +538,7 @@ void DSI_clk_ULP_mode(DISP_MODULE_ENUM module, cmdqRecHandle cmdq, bool enter)
 bool DSI_clk_HS_state(DISP_MODULE_ENUM module, cmdqRecHandle cmdq)
 {
 	int i = DSI_MODULE_BEGIN(module);
-	DSI_PHY_LCCON_REG tmpreg;
+	DSI_PHY_LCCON_REG tmpreg = {0};
 
 	DSI_READREG32(PDSI_PHY_LCCON_REG, &tmpreg, &DSI_REG[i]->DSI_PHY_LCCON);
 	return tmpreg.LC_HS_TX_EN ? true : false;
@@ -1038,7 +1038,7 @@ DSI_STATUS DSI_TXRX_Control(DISP_MODULE_ENUM module, cmdqRecHandle cmdq,
 	int vc_num = 0;
 	bool null_packet_en = false;
 	bool dis_eotp_en = false;
-	bool hstx_cklp_en = true; //dsi_params->cont_clock ? false : true;
+	bool hstx_cklp_en = dsi_params->cont_clock ? false : true;
 	int max_return_size = 0;
 
 	switch (lane_num) {
@@ -1901,6 +1901,8 @@ int DSI_read_cmp(unsigned int index, DSI_RX_DATA_REG *read_data,
 		recv_data_cnt = read_data[0].byte1 + read_data[0].byte2 * 16;
 		DISPDBG("packet_type=0x%x,recv_data_cnt = %d\n",
 			packet_type, recv_data_cnt);
+		if (count > 20)
+			count = 20;
 		if (recv_data_cnt > count)
 			recv_data_cnt = count;
 		if (recv_data_cnt <= 4) {
@@ -1917,7 +1919,6 @@ int DSI_read_cmp(unsigned int index, DSI_RX_DATA_REG *read_data,
 		}
 		for (i = 0; i < recv_data_cnt; i++) {
 			DISPDBG("buffer[%d]=0x%x\n", i, buffer[i]);
-
 			if (buffer[i] != dsi_params->lcm_esd_check_table[index].para_list[i]) {
 				ret = 1;
 				DISPMSG("[ESD]CMP index %d return value 0x%x,para_list[%d]=0x%x\n", index,
@@ -1938,7 +1939,6 @@ int DSI_read_cmp(unsigned int index, DSI_RX_DATA_REG *read_data,
 		DISPDBG("packet_type=0x%x,recv_data_cnt = %d\n", packet_type, recv_data_cnt);
 		for (i = 0; i < recv_data_cnt; i++) {
 			DISPDBG("buffer[%d]=0x%x\n", i, buffer[i]);
-
 			if (buffer[i] != dsi_params->lcm_esd_check_table[index].para_list[i]) {
 				ret = 1;
 				DISPMSG("[ESD]CMP index %d return value 0x%x,para_list[%d]=0x%x\n", index,
@@ -2679,14 +2679,14 @@ int DSI_Send_ROI(DISP_MODULE_ENUM module, void *handle, unsigned int x, unsigned
 
 static void lcm_set_reset_pin(uint32_t value)
 {
-#if 0
+#if 1
 	DSI_OUTREG32(NULL, DISPSYS_CONFIG_BASE + 0x150, value);
 #else
 #if !defined(CONFIG_MTK_LEGACY)
 	if (value)
-		mt_dsi_pinctrl_set(LCM_RESET_PIN_NO, 1);
+		disp_dts_gpio_select_state(DTS_GPIO_STATE_LCM_RST_OUT1);
 	else
-		mt_dsi_pinctrl_set(LCM_RESET_PIN_NO, 0);
+		disp_dts_gpio_select_state(DTS_GPIO_STATE_LCM_RST_OUT0);
 #endif
 #endif
 }
@@ -2865,15 +2865,6 @@ void DSI_ChangeClk(DISP_MODULE_ENUM module, uint32_t clk)
 	}
 }
 
-void DSI_Get_Current_CLK(DISP_MODULE_ENUM module, unsigned int *clk)
-{
-	int i=0;
-	for(i = DSI_MODULE_BEGIN(module);i <= DSI_MODULE_END(module);i++)
-	{
-		LCM_DSI_PARAMS *dsi_params=&_dsi_context[i].dsi_params;
-		*clk = dsi_params->PLL_CLOCK;
-	}
-}
 int ddp_dsi_init(DISP_MODULE_ENUM module, void *cmdq)
 {
 	DSI_STATUS ret = DSI_STATUS_OK;
@@ -3010,15 +3001,15 @@ static void DSI_PHY_CLK_LP_PerLine_config(DISP_MODULE_ENUM module, cmdqRecHandle
 					  LCM_DSI_PARAMS *dsi_params)
 {
 	int i;
-	DSI_PHY_TIMCON0_REG timcon0;	/* LPX */
-	DSI_PHY_TIMCON2_REG timcon2;	/* CLK_HS_TRAIL, CLK_HS_ZERO */
-	DSI_PHY_TIMCON3_REG timcon3;	/* CLK_HS_EXIT, CLK_HS_POST, CLK_HS_PREP */
-	DSI_HSA_WC_REG hsa;
-	DSI_HBP_WC_REG hbp;
-	DSI_HFP_WC_REG hfp, new_hfp;
-	DSI_BLLP_WC_REG bllp;
-	DSI_PSCTRL_REG ps;
-	uint32_t hstx_ckl_wc, new_hstx_ckl_wc;
+	DSI_PHY_TIMCON0_REG timcon0 = {0};	/* LPX */
+	DSI_PHY_TIMCON2_REG timcon2 = {0};	/* CLK_HS_TRAIL, CLK_HS_ZERO */
+	DSI_PHY_TIMCON3_REG timcon3 = {0};	/* CLK_HS_EXIT, CLK_HS_POST, CLK_HS_PREP */
+	DSI_HSA_WC_REG hsa = {0};
+	DSI_HBP_WC_REG hbp = {0};
+	DSI_HFP_WC_REG hfp = {0}, new_hfp = {0};
+	DSI_BLLP_WC_REG bllp = {0};
+	DSI_PSCTRL_REG ps = {0};
+	uint32_t hstx_ckl_wc = 0, new_hstx_ckl_wc = 0;
 	uint32_t v_a, v_b, v_c, lane_num;
 	LCM_DSI_MODE_CON dsi_mode;
 
@@ -3255,16 +3246,6 @@ int ddp_dsi_stop(DISP_MODULE_ENUM module, void *cmdq_handle)
 	DSI_clk_HS_mode(module, cmdq_handle, false);
 	return 0;
 }
-
-/*TUI will use the api*/
-int dsi_enable_irq(DISP_MODULE_ENUM module, void *handle, unsigned int enable)
-{
-	if (module == DISP_MODULE_DSI0)
-		DSI_OUTREGBIT(handle, DSI_INT_ENABLE_REG, DSI_REG[0]->DSI_INTEN, FRAME_DONE_INT_EN, enable);
-
-	return 0;
-}
-
 
 int ddp_dsi_switch_lcm_mode(DISP_MODULE_ENUM module, void *params)
 {
@@ -3697,7 +3678,7 @@ int ddp_dsi_build_cmdq(DISP_MODULE_ENUM module, void *cmdq_trigger_handle, CMDQ_
 	LCM_DSI_PARAMS *dsi_params = NULL;
 	DSI_T0_INS t0;
 	DSI_T0_INS t1;
-	DSI_RX_DATA_REG read_data[4];
+	DSI_RX_DATA_REG read_data[4] = {{0} };
 
 	static cmdqBackupSlotHandle hSlot[4] = {0, 0, 0, 0};
 
@@ -4421,7 +4402,7 @@ uint32_t PanelMaster_get_dsi_timing(uint32_t dsi_index, MIPI_SETTING_TYPE type)
 		return dsi_val;
 	case HPW:
 		{
-			DSI_HSA_WC_REG tmp_reg;
+			DSI_HSA_WC_REG tmp_reg = {0};
 
 			DSI_READREG32(PDSI_HSA_WC_REG, &tmp_reg, &dsi_reg->DSI_HSA_WC);
 			dsi_val = (tmp_reg.HSA_WC + 10) / fbconfig_dsiTmpBufBpp;
@@ -4429,7 +4410,7 @@ uint32_t PanelMaster_get_dsi_timing(uint32_t dsi_index, MIPI_SETTING_TYPE type)
 		}
 	case HFP:
 		{
-			DSI_HFP_WC_REG tmp_hfp;
+			DSI_HFP_WC_REG tmp_hfp = {0};
 
 			DSI_READREG32(PDSI_HFP_WC_REG, &tmp_hfp, &dsi_reg->DSI_HFP_WC);
 			dsi_val = ((tmp_hfp.HFP_WC + 12) / fbconfig_dsiTmpBufBpp);
@@ -4437,7 +4418,7 @@ uint32_t PanelMaster_get_dsi_timing(uint32_t dsi_index, MIPI_SETTING_TYPE type)
 		}
 	case HBP:
 		{
-			DSI_HBP_WC_REG tmp_hbp;
+			DSI_HBP_WC_REG tmp_hbp = {0};
 			LCM_DSI_PARAMS *dsi_params;
 
 			dsi_params = get_dsi_params_handle(dsi_index);
@@ -4451,7 +4432,7 @@ uint32_t PanelMaster_get_dsi_timing(uint32_t dsi_index, MIPI_SETTING_TYPE type)
 		}
 	case VPW:
 		{
-			DSI_VACT_NL_REG tmp_vpw;
+			DSI_VACT_NL_REG tmp_vpw = {0};
 
 			DSI_READREG32(PDSI_VACT_NL_REG, &tmp_vpw, &dsi_reg->DSI_VACT_NL);
 			dsi_val = tmp_vpw.VACT_NL;
@@ -4459,7 +4440,7 @@ uint32_t PanelMaster_get_dsi_timing(uint32_t dsi_index, MIPI_SETTING_TYPE type)
 		}
 	case VFP:
 		{
-			DSI_VFP_NL_REG tmp_vfp;
+			DSI_VFP_NL_REG tmp_vfp = {0};
 
 			DSI_READREG32(PDSI_VFP_NL_REG, &tmp_vfp, &dsi_reg->DSI_VFP_NL);
 			dsi_val = tmp_vfp.VFP_NL;
@@ -4467,7 +4448,7 @@ uint32_t PanelMaster_get_dsi_timing(uint32_t dsi_index, MIPI_SETTING_TYPE type)
 		}
 	case VBP:
 		{
-			DSI_VBP_NL_REG tmp_vbp;
+			DSI_VBP_NL_REG tmp_vbp = {0};
 
 			DSI_READREG32(PDSI_VBP_NL_REG, &tmp_vbp, &dsi_reg->DSI_VBP_NL);
 			dsi_val = tmp_vbp.VBP_NL;

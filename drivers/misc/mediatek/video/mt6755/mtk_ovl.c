@@ -253,21 +253,26 @@ static int ovl2mem_callback(unsigned int userdata)
 	layid = disp_sync_get_output_timeline_id();
 	fence_idx = mtkfb_query_idx_by_ticket(pgc->session, layid, userdata);
 	if (fence_idx >= 0) {
-		disp_ddp_path_config *data_config =
-			dpmgr_path_get_last_config(pgc->dpmgr_handle);
-		if (data_config) {
-			WDMA_CONFIG_STRUCT wdma_layer;
+		if (pgc->dpmgr_handle != NULL) {
+			disp_ddp_path_config *data_config =
+				dpmgr_path_get_last_config(pgc->dpmgr_handle);
+			if (data_config) {
+				WDMA_CONFIG_STRUCT wdma_layer;
 
-			wdma_layer.dstAddress =
-			    mtkfb_query_buf_mva(pgc->session, layid, fence_idx);
-			wdma_layer.outputFormat = data_config->wdma_config.outputFormat;
-			wdma_layer.srcWidth = data_config->wdma_config.srcWidth;
-			wdma_layer.srcHeight = data_config->wdma_config.srcHeight;
-			wdma_layer.dstPitch = data_config->wdma_config.dstPitch;
+				wdma_layer.dstAddress =
+					mtkfb_query_buf_mva(pgc->session, layid, fence_idx);
+				wdma_layer.outputFormat = data_config->wdma_config.outputFormat;
+				wdma_layer.srcWidth = data_config->wdma_config.srcWidth;
+				wdma_layer.srcHeight = data_config->wdma_config.srcHeight;
+				wdma_layer.dstPitch = data_config->wdma_config.dstPitch;
 
-			dprec_mmp_dump_wdma_layer(&wdma_layer, 1);
+				dprec_mmp_dump_wdma_layer(&wdma_layer, 1);
+			}
+			mtkfb_release_fence(pgc->session, layid, fence_idx);
+		} else {
+			/*release feance*/
+			mtkfb_release_fence(pgc->session, layid, fence_idx);
 		}
-		mtkfb_release_fence(pgc->session, layid, fence_idx);
 	}
 
 	atomic_set(&g_release_ticket, userdata);
@@ -347,7 +352,7 @@ int ovl2mem_init(unsigned int session)
 	pgc->state = 1;
 	pgc->session = session;
 	atomic_set(&g_trigger_ticket, 1);
-	atomic_set(&g_release_ticket, 1);
+	atomic_set(&g_release_ticket, 0);
 
 Exit:
 	_ovl2mem_path_unlock(__func__);
@@ -385,14 +390,18 @@ int ovl2mem_input_config(disp_session_input_config *input)
 		dprec_logger_start(DPREC_LOGGER_PRIMARY_CONFIG,
 				   input->config[i].layer_id | (input->config[i].layer_enable << 16),
 				   0/*input->config[i].src_phy_addr*/);
-
 		config_layer_id = input->config[i].layer_id;
-		_convert_disp_input_to_ovl(&(data_config->ovl_config[config_layer_id]), &(input->config[i]));
-		dprec_mmp_dump_ovl_layer(&(data_config->ovl_config[config_layer_id]), config_layer_id, 3);
+		if (config_layer_id < (ARRAY_SIZE(input->config))) {
+			_convert_disp_input_to_ovl(&(data_config->ovl_config[config_layer_id]), &(input->config[i]));
+			dprec_mmp_dump_ovl_layer(&(data_config->ovl_config[config_layer_id]), config_layer_id, 3);
 
-		data_config->ovl_dirty = 1;
-		dprec_logger_done(DPREC_LOGGER_PRIMARY_CONFIG, input->config[i].src_offset_x,
-											input->config[i].src_offset_y);
+			data_config->ovl_dirty = 1;
+			dprec_logger_done(DPREC_LOGGER_PRIMARY_CONFIG, input->config[i].src_offset_x,
+							input->config[i].src_offset_y);
+		} else {
+			DISPERR("config_layer_id:%u, out of the bounds\n", config_layer_id);
+			BUG_ON(1);
+		}
 	}
 
 	if (dpmgr_path_is_busy(pgc->dpmgr_handle))
@@ -555,7 +564,7 @@ int ovl2mem_deinit(void)
 	pgc->state = 0;
 	pgc->need_trigger_path = 0;
 	atomic_set(&g_trigger_ticket, 1);
-	atomic_set(&g_release_ticket, 1);
+	atomic_set(&g_release_ticket, 0);
 
 Exit:
 	_ovl2mem_path_unlock(__func__);

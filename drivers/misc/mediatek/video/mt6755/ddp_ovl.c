@@ -326,6 +326,19 @@ static int ovl_layer_config(DISP_MODULE_ENUM module,
 	input_fmt = ufmt_get_format(format);
 	is_rgb = ufmt_get_rgb(format);
 
+	if (rotate) {
+		unsigned int bg_h, bg_w;
+
+		bg_h = DISP_REG_GET(ovl_base + DISP_REG_OVL_ROI_SIZE);
+		bg_w = bg_h & 0xFFFF;
+		bg_h = bg_h >> 16;
+
+		DISP_REG_SET(handle, DISP_REG_OVL_L0_OFFSET + layer_offset,
+				((bg_h - cfg->dst_h - cfg->dst_y) << 16) | (bg_w - dst_w - cfg->dst_x));
+	} else {
+		DISP_REG_SET(handle, DISP_REG_OVL_L0_OFFSET + layer_offset, (cfg->dst_y << 16) | cfg->dst_x);
+	}
+
 	if (format == UFMT_UYVY || format == UFMT_VYUY ||
 	    format == UFMT_YUYV || format == UFMT_YVYU) {
 		unsigned int regval = 0;
@@ -387,23 +400,10 @@ static int ovl_layer_config(DISP_MODULE_ENUM module,
 
 	DISP_REG_SET(handle, DISP_REG_OVL_L0_SRC_SIZE + layer_offset, cfg->dst_h << 16 | dst_w);
 
-	if (rotate) {
-		unsigned int bg_h, bg_w;
-
-		bg_h = DISP_REG_GET(ovl_base + DISP_REG_OVL_ROI_SIZE);
-		bg_w = bg_h & 0xFFFF;
-		bg_h = bg_h >> 16;
-		DISP_REG_SET(handle, DISP_REG_OVL_L0_OFFSET + layer_offset,
-			     ((bg_h - cfg->dst_h - cfg->dst_y) << 16) | (bg_w - dst_w - cfg->dst_x));
-		DISP_REG_SET(handle, DISP_REG_OVL_L0_ADDR + layer_offset,
-			     cfg->addr + cfg->src_pitch * (cfg->dst_h + cfg->src_y - 1) + (src_x + dst_w) * Bpp - 1);
+	if (rotate)
 		offset = (src_x + dst_w) * Bpp + (cfg->src_y + cfg->dst_h - 1) * cfg->src_pitch - 1;
-	} else {
-		DISP_REG_SET(handle, DISP_REG_OVL_L0_OFFSET + layer_offset, (cfg->dst_y << 16) | cfg->dst_x);
-		DISP_REG_SET(handle, DISP_REG_OVL_L0_ADDR + layer_offset,
-			cfg->addr + src_x * Bpp + cfg->src_y * cfg->src_pitch);
+	else
 		offset = src_x * Bpp + cfg->src_y * cfg->src_pitch;
-	}
 
 	if (!is_engine_sec) {
 		DISP_REG_SET(handle, DISP_REG_OVL_L0_ADDR + layer_offset, cfg->addr + offset);
@@ -785,7 +785,7 @@ static int ovl_config_l(DISP_MODULE_ENUM module, disp_ddp_path_config *pConfig, 
 {
 	int enabled_layers = 0;
 	int has_sec_layer = 0;
-	int local_layer, global_layer, layer_id;
+	unsigned int local_layer, global_layer, layer_id;
 
 	if (pConfig->dst_dirty)
 		ovl_roi(module, pConfig->dst_w, pConfig->dst_h, gOVLBackground, handle);
@@ -805,17 +805,28 @@ static int ovl_config_l(DISP_MODULE_ENUM module, disp_ddp_path_config *pConfig, 
 
 	/* check if the ovl module has sec layer */
 	for (layer_id = global_layer; layer_id < (global_layer + ovl_layer_num(module)); layer_id++) {
-		if (pConfig->ovl_config[layer_id].layer_en &&
-		    (pConfig->ovl_config[layer_id].security == DISP_SECURE_BUFFER))
+		if (unlikely(layer_id > TOTAL_OVL_LAYER_NUM - 1)) {
+			DISPERR("%s: %s layer_id out of max num\n", __func__,
+			     ddp_get_module_name(module));
+			BUG();
+		} else if (pConfig->ovl_config[layer_id].layer_en &&
+		    (pConfig->ovl_config[layer_id].security == DISP_SECURE_BUFFER)) {
 			has_sec_layer = 1;
+		}
 	}
 
 	setup_ovl_sec(module, handle, has_sec_layer);
 
 	for (local_layer = 0; local_layer < ovl_layer_num(module); local_layer++, global_layer++) {
+		OVL_CONFIG_STRUCT *ovl_cfg = NULL;
 
-		OVL_CONFIG_STRUCT *ovl_cfg = &pConfig->ovl_config[global_layer];
+		if (unlikely(global_layer >= ARRAY_SIZE(pConfig->ovl_config))) {
+			DISPERR("%s: %s global_layer out of max num\n", __func__,
+			     ddp_get_module_name(module));
+			break;
+		}
 
+		ovl_cfg = &pConfig->ovl_config[global_layer];
 		pConfig->ovl_layer_scanned |= (1 << global_layer);
 
 		if (ovl_cfg->layer_en == 0)

@@ -67,9 +67,7 @@
 #endif
 
 #include "disp_recovery.h"
-#ifdef __HCT_DELAY_ONLY_FOR_DH_TD4300_ESDCHECK__
-extern int hct_globle_flags;
-#endif
+
 static struct task_struct *primary_display_check_task; /* For abnormal check */
 static wait_queue_head_t _check_task_wq;	/* used for blocking check task  */
 static atomic_t _check_task_wakeup = ATOMIC_INIT(0);	/* For  Check Task */
@@ -175,9 +173,7 @@ int _esd_check_config_handle_cmd(cmdqRecHandle handle)
 int _esd_check_config_handle_vdo(cmdqRecHandle handle)
 {
 	int ret = 0;		/* 0:success , 1:fail */
-#ifdef __HCT_DELAY_ONLY_FOR_DH_TD4300_ESDCHECK__
-			mdelay(200);
-#endif
+
 	/* 1.reset */
 	cmdqRecReset(handle);
 
@@ -540,14 +536,7 @@ static int primary_display_check_recovery_worker_kthread(void *data)
 
 		/* 1. esd check & recovery */
 		if (esd_check_enable) {
-#ifdef __HCT_DELAY_ONLY_FOR_DH_TD4300_ESDCHECK__
-			DISPMSG("esd:hct_globle_flags = %d\n",hct_globle_flags);
-			if(hct_globle_flags == 1)
-			{
-				hct_globle_flags = 0;
-				DISPMSG("hct_globle_flags : skip first esd check when resume!\n");
-			} else {
-#endif
+
 			i = 0;/*repeat*/
 			do {
 				ret = primary_display_esd_check();
@@ -569,9 +558,6 @@ static int primary_display_check_recovery_worker_kthread(void *data)
 				DISPMSG("[ESD]esd recovery success\n");
 				recovery_done = 0;
 			}
-#ifdef __HCT_DELAY_ONLY_FOR_DH_TD4300_ESDCHECK__
-			}
-#endif
 		}
 
 		_primary_path_switch_dst_unlock();

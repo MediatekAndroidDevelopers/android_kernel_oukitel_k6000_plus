@@ -363,7 +363,8 @@ static void mtkfb_ion_free_handle(struct ion_client *client, struct ion_handle *
 static size_t mtkfb_ion_phys_mmu_addr(struct ion_client *client, struct ion_handle *handle,
 				      unsigned int *mva)
 {
-	size_t size;
+	size_t size = 0;
+	ion_phys_addr_t phy_addr = 0;
 
 	if (!ion_client) {
 		MTKFB_FENCE_ERR("invalid ion client!\n");
@@ -372,7 +373,8 @@ static size_t mtkfb_ion_phys_mmu_addr(struct ion_client *client, struct ion_hand
 	if (!handle)
 		return 0;
 
-	ion_phys(client, handle, (ion_phys_addr_t *) mva, &size);
+	ion_phys(client, handle, &phy_addr, &size);
+	*mva = (unsigned int)phy_addr;
 	MTKFB_FENCE_LOG("alloc mmu addr hnd=0x%p,mva=0x%08x\n", handle, (unsigned int)*mva);
 	return size;
 }
