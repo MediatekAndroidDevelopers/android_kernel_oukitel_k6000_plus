@@ -88,6 +88,86 @@ volatile unsigned long dispsys_reg[DISP_REG_NUM] = { 0 };
 
 volatile unsigned long mipi_tx_reg = 0;
 volatile unsigned long dsi_reg_va = 0;
+
+static struct pinctrl *dsi_pinctrl1;
+static struct pinctrl_state *pins_default, *lcm_rest_en0, * lcm_rest_en1, *lcm_power_dm_en0,*lcm_power_dm_en1,
+                                     *lcm_power_dp_en0,*lcm_power_dp_en1, *lcm_power_enn0,*lcm_power_enn1, *lcm_power_enp0,*lcm_power_enp1;
+
+int mt_dsi_get_gpio_info(struct platform_device *pdev)
+{
+	int ret;
+
+	printk("[led] mt_dsi_get_gpio_info+++++++++++++++++\n");
+	dsi_pinctrl1 = devm_pinctrl_get(&pdev->dev);
+	if (IS_ERR(dsi_pinctrl1)) {
+		ret = PTR_ERR(dsi_pinctrl1);
+		dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl1!\n");
+             return -1;
+	}
+	pins_default = pinctrl_lookup_state(dsi_pinctrl1, "default");
+	if (IS_ERR(pins_default)) {
+		ret = PTR_ERR(pins_default);
+		dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl default %d!\n", ret);
+	}
+	lcm_rest_en0 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_rest_en0");
+	if (IS_ERR(lcm_rest_en0)) {
+		ret = PTR_ERR(lcm_rest_en0);
+		dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_rest_en0!\n");
+	}
+	lcm_rest_en1 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_rest_en1");
+	if (IS_ERR(lcm_rest_en1)) {
+		ret = PTR_ERR(lcm_rest_en1);
+		dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_rest_en1!\n");
+	}
+
+      lcm_power_dm_en0 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_dm_en0");
+      if (IS_ERR(lcm_power_dm_en0)) {
+          ret = PTR_ERR(lcm_power_dm_en0);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_dm_en0!\n");
+      }
+      lcm_power_dm_en1 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_dm_en1");
+      if (IS_ERR(lcm_power_dm_en1)) {
+          ret = PTR_ERR(lcm_power_dm_en1);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_dm_en1!\n");
+      }
+
+      lcm_power_dp_en0 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_dp_en0");
+      if (IS_ERR(lcm_power_dp_en0)) {
+          ret = PTR_ERR(lcm_power_dp_en0);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_dp_en0!\n");
+      }
+      lcm_power_dp_en1 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_dp_en1");
+      if (IS_ERR(lcm_power_dp_en1)) {
+          ret = PTR_ERR(lcm_power_dp_en1);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_dp_en1!\n");
+      }
+
+      lcm_power_enn0 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_enn0");
+      if (IS_ERR(lcm_power_enn0)) {
+          ret = PTR_ERR(lcm_power_enn0);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_enn0!\n");
+      }
+      lcm_power_enn1 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_enn1");
+      if (IS_ERR(lcm_power_enn1)) {
+          ret = PTR_ERR(lcm_power_enn1);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_enn1!\n");
+      }
+
+      lcm_power_enp0 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_enp0");
+      if (IS_ERR(lcm_power_enp0)) {
+          ret = PTR_ERR(lcm_power_enp0);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_enp0!\n");
+      }
+      lcm_power_enp1 = pinctrl_lookup_state(dsi_pinctrl1, "lcm_power_enp1");
+      if (IS_ERR(lcm_power_enp1)) {
+          ret = PTR_ERR(lcm_power_enp1);
+          dev_err(&pdev->dev, "fwq Cannot find lcm pinctrl lcm_power_enp1!\n");
+      }
+    
+      return 0;
+
+}
+
 /* from DTS, for debug */
 unsigned long ddp_reg_pa_base[DISP_REG_NUM] = {
 	0x14000000,	/*CONFIG*/
