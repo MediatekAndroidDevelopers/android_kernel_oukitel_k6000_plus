@@ -231,13 +231,18 @@ const char *cmdq_mdp_dispatch_virtual(uint64_t engineFlag)
 
 void cmdq_mdp_trackTask_virtual(const struct TaskStruct *pTask)
 {
-	memcpy(gCmdqMDPTask[gCmdqMDPTaskIndex].callerName,
-		pTask->callerName, sizeof(pTask->callerName));
-	if (pTask->userDebugStr)
-		memcpy(gCmdqMDPTask[gCmdqMDPTaskIndex].userDebugStr,
-			pTask->userDebugStr, (uint32_t)strlen(pTask->userDebugStr) + 1);
-	else
+	if (pTask) {
+		memcpy(gCmdqMDPTask[gCmdqMDPTaskIndex].callerName,
+			pTask->callerName, sizeof(pTask->callerName));
+		if (pTask->userDebugStr)
+			memcpy(gCmdqMDPTask[gCmdqMDPTaskIndex].userDebugStr,
+				pTask->userDebugStr, (uint32_t)strlen(pTask->userDebugStr) + 1);
+		else
+			gCmdqMDPTask[gCmdqMDPTaskIndex].userDebugStr[0] = '\0';
+	} else {
+		gCmdqMDPTask[gCmdqMDPTaskIndex].callerName[0] = '\0';
 		gCmdqMDPTask[gCmdqMDPTaskIndex].userDebugStr[0] = '\0';
+	}
 
 	CMDQ_MSG("cmdq_mdp_trackTask: caller: %s\n",
 		gCmdqMDPTask[gCmdqMDPTaskIndex].callerName);
@@ -269,7 +274,7 @@ void cmdq_mdp_get_module_pa_virtual(long *startPA, long *endPA)
 #endif
 
 #ifdef CMDQ_USE_LEGACY
-void cmdq_mdp_enable_clock_mutex32k(bool enable)
+void cmdq_mdp_enable_clock_mutex32k_virtual(bool enable)
 {
 	/* Do Nothing */
 }
@@ -325,7 +330,7 @@ void cmdq_mdp_virtual_function_setting(void)
 	pFunc->mdpGetModulePa = cmdq_mdp_get_module_pa_virtual;
 #endif
 #ifdef CMDQ_USE_LEGACY
-	pFunc->mdpEnableClockMutex32k = cmdq_mdp_enable_clock_mutex32k;
+	pFunc->mdpEnableClockMutex32k = cmdq_mdp_enable_clock_mutex32k_virtual;
 #endif
 }
 

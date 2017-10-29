@@ -18,6 +18,14 @@
 #ifndef CMDQ_OF_SUPPORT
 #include <mach/mt_irq.h>
 #endif
+#ifdef CONFIG_MTK_CMDQ_TAB
+/* CCF */
+#ifdef CMDQ_OF_SUPPORT
+#include <linux/clk.h>
+#include <linux/clk-provider.h>
+#endif
+#endif
+
 
 /* device tree */
 #include <linux/of.h>
@@ -238,6 +246,16 @@ uint32_t cmdq_dev_enable_device_clock(bool enable, struct clk *clk_module, const
 	return result;
 }
 
+#ifdef CONFIG_MTK_CMDQ_TAB
+bool cmdq_dev_gce_clock_is_on(void)
+{
+	if (__clk_get_enable_count(gCmdqDev.clk_gce) > 0)
+		return 1;
+	else
+		return 0;
+}
+#endif
+
 bool cmdq_dev_device_clock_is_enable(struct clk *clk_module)
 {
 	return true;
@@ -419,8 +437,8 @@ void cmdq_dev_init_subsys(struct device_node *node)
 #ifdef CMDQ_OF_SUPPORT
 void cmdq_dev_get_event_value_by_name(struct device_node *node, CMDQ_EVENT_ENUM event, const char *dts_name)
 {
-	int status;
-	uint32_t event_value;
+	int status = 0;
+	uint32_t event_value = 0;
 
 	do {
 		if (event < 0 || event >= CMDQ_MAX_HW_EVENT_COUNT)
@@ -499,8 +517,8 @@ void cmdq_dev_get_dts_setting(cmdq_dts_setting *dts_setting)
 
 void cmdq_dev_init_resource(CMDQ_DEV_INIT_RESOURCE_CB init_cb)
 {
-	int status, index;
-	uint32_t count;
+	int status = 0, index = 0;
+	uint32_t count = 0;
 
 	do {
 		status = of_property_read_u32(gCmdqDev.pDev->of_node,
