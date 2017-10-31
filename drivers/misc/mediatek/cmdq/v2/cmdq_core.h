@@ -111,12 +111,6 @@ else								\
 #define CMDQ_THREAD_SEC_SUB_DISP		13
 #define CMDQ_THREAD_SEC_MDP				14
 
-/* max count of regs */
-#define CMDQ_MAX_COMMAND_SIZE		(0x10000)
-#define CMDQ_MAX_DUMP_REG_COUNT		(2048)
-#define CMDQ_MAX_WRITE_ADDR_COUNT	(PAGE_SIZE / sizeof(u32))
-#define CMDQ_MAX_DBG_STR_LEN		1024
-
 #ifdef CMDQ_DUMP_FIRSTERROR
 #ifdef CMDQ_LARGE_MAX_FIRSTERROR_BUFFER
 #define CMDQ_MAX_FIRSTERROR	(64*1024)
@@ -138,7 +132,7 @@ typedef struct DumpFirstErrorStruct {
 #define CMDQ_LOG(string, args...) \
 {			\
 if (1) {	\
-	pr_notice("[CMDQ]"string, ##args); \
+	pr_err("[CMDQ]"string, ##args); \
 	cmdq_core_save_first_dump("[CMDQ]"string, ##args); \
 }			\
 }
@@ -146,7 +140,7 @@ if (1) {	\
 #define CMDQ_MSG(string, args...) \
 {			\
 if (cmdq_core_should_print_msg()) { \
-	pr_notice("[CMDQ]"string, ##args); \
+	pr_warn("[CMDQ]"string, ##args); \
 }			\
 }
 
@@ -832,12 +826,13 @@ extern "C" {
 
 
 /**
- * Helper function get valid task pointer
+ * Helper function checking validity of a task pointer
  *
  * Return:
- *     task pointer if available
+ *     false if NOT a valid pointer
+ *     true if valid
  */
-	struct TaskStruct *cmdq_core_get_task_ptr(void *task_handle);
+	bool cmdqIsValidTaskPtr(void *pTask);
 
 /**
  * Immediately clear CMDQ event to 0 with CPU
@@ -1038,8 +1033,6 @@ extern "C" {
 								CmdqResourceReleaseCB resourceRelease);
 
 	void cmdq_core_dump_dts_setting(void);
-	int32_t cmdq_core_get_running_task_by_engine_unlock(uint64_t engineFlag,
-		uint32_t userDebugStrLen, struct TaskStruct *p_out_task);
 	int32_t cmdq_core_get_running_task_by_engine(uint64_t engineFlag,
 		uint32_t userDebugStrLen, TaskStruct *p_out_task);
 	uint32_t cmdq_core_thread_prefetch_size(const int32_t thread);

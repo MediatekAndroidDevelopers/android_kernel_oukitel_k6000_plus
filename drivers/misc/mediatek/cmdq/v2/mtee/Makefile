@@ -29,6 +29,7 @@ ccflags-y += -DCMDQ_USE_LEGACY
 endif
 
 ifeq ($(CONFIG_MTK_SEC_VIDEO_PATH_SUPPORT),y)
+$(warning start to build mt8163 cmdq secure)
 	ccflags-y += -DCMDQ_SECURE_PATH_SUPPORT
 endif
 	ccflags-y += -I$(srctree)/include
@@ -39,7 +40,7 @@ endif
              	 -I$(srctree)/drivers/misc/mediatek/cmdq/v2/inc/cmdq_sec_tl \
 	             -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include \
 	             -I$(srctree)/include/trustzone
-
+$(warning $(srctree)/include/trustzone)
+#endif
 
 obj-y += cmdq_sec.o
-

@@ -190,7 +190,7 @@ int32_t cmdq_append_addr_metadata(cmdqRecHandle handle, const cmdqSecAddrMetadat
 
 		CMDQ_ERR("Metadata idx = %d reach the max allowed number = %d.\n",
 			 handle->secData.addrMetadataCount, maxMetaDataCount);
-		CMDQ_MSG("ADDR: type:%d, baseHandle:0x%llx, offset:%d, size:%d, port:%d\n",
+		CMDQ_MSG("ADDR: type:%d, baseHandle:%x, offset:%d, size:%d, port:%d\n",
 			 pMetadata->type, pMetadata->baseHandle, pMetadata->offset, pMetadata->size,
 			 pMetadata->port);
 		status = -EFAULT;
@@ -580,7 +580,7 @@ int32_t cmdq_op_write_reg(cmdqRecHandle handle, uint32_t addr,
 }
 
 int32_t cmdq_op_write_reg_secure(cmdqRecHandle handle, uint32_t addr,
-			   CMDQ_SEC_ADDR_METADATA_TYPE type, uint64_t baseHandle,
+			   CMDQ_SEC_ADDR_METADATA_TYPE type, uint32_t baseHandle,
 			   uint32_t offset, uint32_t size, uint32_t port)
 {
 #ifdef CMDQ_SECURE_PATH_SUPPORT
@@ -1037,11 +1037,6 @@ int32_t cmdq_setup_sec_data_of_command_desc_by_rec_handle(cmdqCommandStruct *pDe
 	pDesc->secData.addrMetadataCount = handle->secData.addrMetadataCount;
 	pDesc->secData.addrMetadatas = handle->secData.addrMetadatas;
 	pDesc->secData.addrMetadataMaxCount = handle->secData.addrMetadataMaxCount;
-#ifdef CMDQ_SECURE_PATH_SUPPORT
-#ifdef CONFIG_MTK_CMDQ_TAB
-	pDesc->secData.secMode = handle->secData.secMode;
-#endif
-#endif
 
 	/* init reserved field */
 	pDesc->secData.resetExecCnt = false;
@@ -1643,7 +1638,7 @@ int32_t cmdqRecWrite(cmdqRecHandle handle, uint32_t addr, uint32_t value, uint32
 
 int32_t cmdqRecWriteSecure(cmdqRecHandle handle, uint32_t addr,
 			   CMDQ_SEC_ADDR_METADATA_TYPE type,
-			   uint64_t baseHandle, uint32_t offset, uint32_t size, uint32_t port)
+			   uint32_t baseHandle, uint32_t offset, uint32_t size, uint32_t port)
 {
 	return cmdq_op_write_reg_secure(handle, addr, type, baseHandle, offset, size, port);
 }
