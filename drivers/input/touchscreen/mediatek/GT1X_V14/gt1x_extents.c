@@ -401,7 +401,7 @@ s32 gesture_event_handler(struct input_dev * dev)
 	mutex_unlock(&gesture_data_mutex);
 
     /* get key code */
-    key_code = ges_type < 16? KEY_GES_CUSTOM : KEY_GES_REGULAR;
+    key_code = KEY_PROG3;/*ges_type < 16? KEY_GES_CUSTOM : KEY_GES_REGULAR;*/
 	GTP_DEBUG("Gesture: 0x%02X, points: %d", doze_buf[0], doze_buf[1]);
 
 

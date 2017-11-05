@@ -30,6 +30,7 @@
 #include <linux/input/mt.h>
 #endif
 
+
 #if (GTP_HAVE_TOUCH_KEY && TPD_HAVE_BUTTON)
 #error GTP_HAVE_TOUCH_KEY and TPD_HAVE_BUTTON are mutually exclusive.
 #endif
@@ -47,7 +48,6 @@ static DEFINE_MUTEX(i2c_access);
 
 #if GTP_GESTURE_WAKEUP
 char tpgesture_value[10]={};
-char tpgesture_status_value[5] = {};
 char tpgesture_status = 0;
 #endif
 #if TPD_HAVE_BUTTON
@@ -542,8 +542,9 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
 #endif
 
 #if GTP_GESTURE_WAKEUP
-	input_set_capability(tpd->dev, EV_KEY, KEY_GES_CUSTOM);
-    input_set_capability(tpd->dev, EV_KEY, KEY_GES_REGULAR);
+	//input_set_capability(tpd->dev, EV_KEY, KEY_GES_CUSTOM);
+    	//input_set_capability(tpd->dev, EV_KEY, KEY_GES_REGULAR);
+    	input_set_capability(tpd->dev, EV_KEY, KEY_PROG3);
 #endif
 
 	tpd_gpio_as_int_bias_dis(GTP_INT_PORT);
@@ -928,22 +929,20 @@ static ssize_t show_tpgesture_value(struct device* dev, struct device_attribute 
 }
 static ssize_t show_tpgesture_status_value(struct device* dev, struct device_attribute *attr, char *buf)
 {
-	printk("show tp gesture status is %s \n",tpgesture_status_value);
-	return scnprintf(buf, PAGE_SIZE, "%s\n", tpgesture_status_value);
+	printk("show tp gesture status is %i \n",tpgesture_status);
+	return scnprintf(buf, PAGE_SIZE, "%i\n", tpgesture_status);
 }
 static ssize_t store_tpgesture_status_value(struct device* dev, struct device_attribute *attr, const char *buf, size_t count)
 {
-	if(!strncmp(buf, "on", 2))
+	if(!strncmp(buf, "1", 1))
 	{
-		sprintf(tpgesture_status_value,"on");
 		tpgesture_status = 1;//status --- on
 	}
 	else
 	{
-		sprintf(tpgesture_status_value,"off");
 		tpgesture_status = 0;//status --- off
 	}
-	GTP_DEBUG("store_tpgesture_status_value status is %s \n",tpgesture_status_value);
+	GTP_DEBUG("store_tpgesture_status status is %i \n",tpgesture_status);
 	return count;
 }
 static DEVICE_ATTR(tpgesture,  0664, show_tpgesture_value, NULL);
