@@ -815,7 +815,9 @@ static void lcm_init(void)
 
 
 static void lcm_suspend(void)
-{    
+{
+return;
+/*
     unsigned int data_array[16];
     
     data_array[0]=0x00280500; // Display Off
@@ -825,18 +827,6 @@ static void lcm_suspend(void)
     data_array[0] = 0x00100500; // Sleep In
     dsi_set_cmdq(data_array, 1, 1);
     MDELAY(120);
-/*
-       data_array[0]=0x05FF1500; // Display Off
-    dsi_set_cmdq(data_array, 1, 1);
-       data_array[0]=0x01FB1500; // Display Off
-    dsi_set_cmdq(data_array, 1, 1);
-       data_array[0]=0x30D71500; // Display Off
-    dsi_set_cmdq(data_array, 1, 1);
-       data_array[0]=0x70D81500; // Display Off
-    dsi_set_cmdq(data_array, 1, 1);
-       data_array[0]=0x014F1500; // Display Off
-    dsi_set_cmdq(data_array, 1, 1);
-*/    
 
     NT35596_DCS_write_1A_1P(0xFF,0x05);
     NT35596_DCS_write_1A_1P(0xFB,0x01);
@@ -853,12 +843,16 @@ static void lcm_suspend(void)
     lcm_util.set_gpio_out(GPIO_LCM_LDO3V3_EN_PIN, GPIO_OUT_ZERO);
     MDELAY(20);
 #endif
+*/
 }
 
 
 static void lcm_resume(void)
 {
+return;
+/*
         lcm_init();
+*/
       /// vcom =vcom-1;
 }
          

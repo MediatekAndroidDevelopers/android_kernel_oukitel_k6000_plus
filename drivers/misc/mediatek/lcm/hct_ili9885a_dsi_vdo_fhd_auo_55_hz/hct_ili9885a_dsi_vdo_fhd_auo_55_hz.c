@@ -344,7 +344,8 @@ static void lcm_init(void)
 
 static void lcm_suspend(void)
 {
-
+return;
+/*
     unsigned int data_array[16];
 
 
@@ -360,7 +361,7 @@ static void lcm_suspend(void)
     SET_RESET_PIN(0);
 	MDELAY(1); // 1ms
 	SET_RESET_PIN(1);
-	MDELAY(120); 
+	MDELAY(120); */
 }
 
 
@@ -372,8 +373,10 @@ static void lcm_suspend(void)
 
 static void lcm_resume(void)
 {
+return;
+/*
      lcm_init();
-
+*/
     /// please notice: the max return packet size is 1
     /// if you want to change it, you can refer to the following marked code
     /// but read_reg currently only support read no more than 4 bytes....

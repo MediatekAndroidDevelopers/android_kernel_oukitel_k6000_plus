@@ -789,6 +789,8 @@ static void lcm_init(void)
 
 static void lcm_suspend(void)
 {    
+return;
+/*
     unsigned int data_array[16];
     
     data_array[0]=0x00280500; // Display Off
@@ -815,13 +817,15 @@ static void lcm_suspend(void)
     lcm_util.set_gpio_dir(GPIO_LCM_LDO3V3_EN_PIN, GPIO_DIR_OUT);
     lcm_util.set_gpio_out(GPIO_LCM_LDO3V3_EN_PIN, GPIO_OUT_ZERO);
     MDELAY(20);
-#endif
+#endif*/
 }
 
 
 static void lcm_resume(void)
 {
-        lcm_init();
+return;
+/*
+        lcm_init();*/
         //vcom ++;
 }
          
