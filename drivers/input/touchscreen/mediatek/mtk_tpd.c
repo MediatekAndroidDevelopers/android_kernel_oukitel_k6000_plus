@@ -440,8 +440,8 @@ static int tpd_fb_notifier_callback(struct notifier_block *self, unsigned long e
 			if (!err)
 				TPD_DMESG("cancel touch_resume_workqueue err = %d\n", err);
 			g_tpd_drv->suspend(NULL);
-		}
 		tpd_suspend_flag = 1;
+		}
 		break;
 	default:
 		break;

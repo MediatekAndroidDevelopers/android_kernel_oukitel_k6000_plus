@@ -132,7 +132,6 @@ SECTIONS
 	_data = .;
 	_sdata = .;
 	RW_DATA_SECTION(64, PAGE_SIZE, THREAD_SIZE)
-	PECOFF_EDATA_PADDING
 	_edata = .;
 
 	BSS_SECTION(0, 0, 0)

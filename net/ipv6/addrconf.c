@@ -3261,8 +3261,7 @@ static void addrconf_rs_timer(unsigned long data)
 		goto out;
 
 	/* Announcement received after solicitation was sent */
-	if (idev->if_flags & IF_RA_RCVD) {
-		pr_info("[VzW]%s has already received RA packet\n", idev->dev->name);
+	if (idev->if_flags & IF_RA_RCVD)
 		goto out;
 
 	if (idev->rs_probes++ < idev->cnf.rtr_solicits || idev->cnf.rtr_solicits < 0) {

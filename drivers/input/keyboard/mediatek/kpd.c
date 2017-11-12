@@ -1243,7 +1243,6 @@ static int kpd_pdrv_probe(struct platform_device *pdev)
 #if defined(CONFIG_HCT_TP_GESTRUE)||__HCT_TP_GESTURE_SUPPORT__
         __set_bit(TP_GESTURE_KEY, kpd_input_dev->keybit);
 #endif
-    
 	if (kpd_dts_data.kpd_sw_rstkey)
 		__set_bit(kpd_dts_data.kpd_sw_rstkey, kpd_input_dev->keybit);
 #ifdef KPD_KEY_MAP

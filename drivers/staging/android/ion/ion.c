@@ -216,13 +216,13 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 
 	if (ret) {
 		if (!(heap->flags & ION_HEAP_FLAG_DEFER_FREE))
-			goto err1;
+			goto err2;
 
 		ion_heap_freelist_drain(heap, 0);
 		ret = heap->ops->allocate(heap, buffer, len, align,
 					  flags);
 		if (ret)
-			goto err1;
+			goto err2;
 	}
 
 	buffer->dev = dev;
@@ -454,22 +454,12 @@ int ion_handle_put(struct ion_handle *handle)
 }
 
 /* Must hold the client lock */
-static int user_ion_handle_put_nolock(struct ion_handle *handle)
-{
-	int ret;
-
-	if (--handle->user_ref_count == 0)
-		ret = ion_handle_put_nolock(handle);
-
-	return ret;
-}
-
-/* Must hold the client lock */
 static void user_ion_handle_get(struct ion_handle *handle)
 {
 	if (handle->user_ref_count++ == 0)
 		kref_get(&handle->ref);
 }
+
 /* Must hold the client lock */
 static struct ion_handle *user_ion_handle_get_check_overflow(struct ion_handle *handle)
 {

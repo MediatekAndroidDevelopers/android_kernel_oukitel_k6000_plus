@@ -1805,16 +1805,7 @@ unsigned long zram_mlog(void)
 #ifdef CONFIG_PROC_FS
 static int zraminfo_proc_show(struct seq_file *m, void *v)
 {
-	struct zs_pool_stats pool_stats;
-
 	if (num_devices == 1 && init_done(zram_devices)) {
-
-		memset(&pool_stats, 0x00, sizeof(struct zs_pool_stats));
-
-		down_read(&zram_devices->init_lock);
-		zs_pool_stats(zram_devices->meta->mem_pool, &pool_stats);
-		up_read(&zram_devices->init_lock);
-
 #define P2K(x) (((unsigned long)x) << (PAGE_SHIFT - 10))
 #define B2K(x) (((unsigned long)x) >> (10))
 		seq_printf(m,
@@ -1834,7 +1825,6 @@ static int zraminfo_proc_show(struct seq_file *m, void *v)
 				"ZSM4k saved:    %8lu kB\n"
 #endif
 				"MaxUsedPages:   %8lu kB\n"
-				"PageMigrated:	 %8lu kB\n"
 				,
 				B2K(zram_devices->disksize),
 				P2K(atomic64_read(&zram_devices->stats.pages_stored)),
@@ -1851,8 +1841,8 @@ static int zraminfo_proc_show(struct seq_file *m, void *v)
 				B2K(atomic64_read(&zram_devices->stats.zsm_saved)),
 				B2K(atomic64_read(&zram_devices->stats.zsm_saved4k)),
 #endif
-				P2K(atomic_long_read(&zram_devices->stats.max_used_pages)),
-				P2K(pool_stats.pages_compacted));
+				P2K(atomic_long_read(&zram_devices->stats.max_used_pages))
+				);
 #undef P2K
 #undef B2K
 		seq_printf(m, "Algorithm: [%s]\n", zram_devices->compressor);

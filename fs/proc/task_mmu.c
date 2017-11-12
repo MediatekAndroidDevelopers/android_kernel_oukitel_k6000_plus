@@ -586,12 +586,6 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 
 				if (swapcount == 0)
 					swapcount = 1;
-
-			mss->swap += PAGE_SIZE;
-			mapcount = swp_swapcount(swpent);
-			if (mapcount >= 2)
-				do_div(pss_delta, mapcount);
-			mss->swap_pss += pss_delta;
 #ifdef CONFIG_ZNDSWAP
 				/* It indicates 2ndswap ONLY */
 				if (swp_type(entry) == 1UL)
@@ -601,6 +595,9 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 #else
 				mss->pswap += (PAGE_SIZE << PSS_SHIFT) / swapcount;
 #endif
+				swap_info_unlock(p);
+			}
+#endif /* CONFIG_SWAP*/
 		} else if (is_migration_entry(swpent))
 			page = migration_entry_to_page(swpent);
 	} else if (pte_file(*pte)) {
