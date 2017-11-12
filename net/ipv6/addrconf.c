@@ -5536,14 +5536,6 @@ static struct addrconf_sysctl_table
 
 		},
 		{
-			.procname       = "use_oif_addrs_only",
-			.data           = &ipv6_devconf.use_oif_addrs_only,
-			.maxlen         = sizeof(int),
-			.mode           = 0644,
-			.proc_handler   = proc_dointvec,
-
-		},
-		{
 			/* sentinel */
 		}
 	},
