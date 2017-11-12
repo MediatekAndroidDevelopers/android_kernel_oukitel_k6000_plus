@@ -334,11 +334,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma, int is_pid)
 
 	/* We don't show the stack guard page in /proc/maps */
 	start = vma->vm_start;
-	if (stack_guard_page_start(vma, start))
-		start += PAGE_SIZE;
 	end = vma->vm_end;
-	if (stack_guard_page_end(vma, end))
-		end -= PAGE_SIZE;
 
 	seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
 	seq_printf(m, "%08lx-%08lx %c%c%c%c %08llx %02x:%02x %lu ",
@@ -565,7 +561,31 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 		/* M for pswap interface */
 		if (!non_swap_entry(swpent)) {
 			int mapcount;
-			u64 pss_delta = (u64)PAGE_SIZE << PSS_SHIFT;
+#ifdef CONFIG_SWAP
+			swp_entry_t entry;
+			struct swap_info_struct *p;
+#endif /* CONFIG_SWAP*/
+
+			mss->swap += PAGE_SIZE;
+			mapcount = swp_swapcount(swpent);
+			if (mapcount >= 2) {
+				u64 pss_delta = (u64)PAGE_SIZE << PSS_SHIFT;
+
+				do_div(pss_delta, mapcount);
+				mss->swap_pss += pss_delta;
+			} else {
+				mss->swap_pss += (u64)PAGE_SIZE << PSS_SHIFT;
+			}
+#ifdef CONFIG_SWAP
+			entry = pte_to_swp_entry(*pte);
+			if (non_swap_entry(entry))
+				return;
+			p = swap_info_get(entry);
+			if (p) {
+				int swapcount = swap_count(p->swap_map[swp_offset(entry)]);
+
+				if (swapcount == 0)
+					swapcount = 1;
 
 			mss->swap += PAGE_SIZE;
 			mapcount = swp_swapcount(swpent);
@@ -573,13 +593,13 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 				do_div(pss_delta, mapcount);
 			mss->swap_pss += pss_delta;
 #ifdef CONFIG_ZNDSWAP
-			/* It indicates 2ndswap ONLY */
-			if (swp_type(swpent) == 1UL)
-				mss->pswap_zndswap += pss_delta;
-			else
-				mss->pswap += pss_delta;
+				/* It indicates 2ndswap ONLY */
+				if (swp_type(entry) == 1UL)
+					mss->pswap_zndswap += (PAGE_SIZE << PSS_SHIFT) / swapcount;
+				else
+					mss->pswap += (PAGE_SIZE << PSS_SHIFT) / swapcount;
 #else
-			mss->pswap += pss_delta;
+				mss->pswap += (PAGE_SIZE << PSS_SHIFT) / swapcount;
 #endif
 		} else if (is_migration_entry(swpent))
 			page = migration_entry_to_page(swpent);

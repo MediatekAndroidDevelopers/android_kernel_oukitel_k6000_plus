@@ -446,7 +446,7 @@ config INET_DIAG_DESTROY
 	depends on INET_DIAG
 	default n
 	---help---
-	  Provides a SOCK_DESTROY operation that allows privileged processes
+	  Provides a SOCK_DESTROY_BACKPORT operation that allows privileged processes
 	  (e.g., a connection manager or a network administration tool such as
 	  ss) to close sockets opened by other processes. Closing a socket in
 	  this way interrupts any blocking read/write/connect operations on

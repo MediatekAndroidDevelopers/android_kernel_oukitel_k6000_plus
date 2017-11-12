@@ -123,6 +123,11 @@ SECTIONS
 #ifdef CONFIG_DEBUG_RODATA
 	. = ALIGN(1<<SECTION_SHIFT);
 #endif
+#ifdef CONFIG_DEBUG_RODATA
+	. = ALIGN(1<<SECTION_SHIFT);
+#endif
+	_etext = .;			/* End of text section */
+
 	RO_DATA(PAGE_SIZE)
 
 	. = ALIGN(4);
@@ -152,20 +157,6 @@ SECTIONS
 #endif
 
 	NOTES
-
-#ifndef CONFIG_XIP_KERNEL
-# ifdef CONFIG_ARM_KERNMEM_PERMS
-	. = ALIGN(1<<SECTION_SHIFT);
-# else
-	. = ALIGN(PAGE_SIZE);
-# endif
-#endif
-	_etext = .;			/* End of text and rodata section */
-
-#ifdef CONFIG_MTK_AEE_MRDUMP
-	.mrdump ALIGN (0x400): {
-	}
-#endif
 
 #ifndef CONFIG_XIP_KERNEL
 # ifdef CONFIG_ARM_KERNMEM_PERMS

@@ -357,3 +357,48 @@ void __init efi_virtmap_init(void)
 	set_bit(EFI_VIRTMAP, &efi.flags);
 	early_memunmap(memmap.map, memmap.map_end - memmap.map);
 }
+early_initcall(arm64_enter_virtual_mode);
+
+void __init efi_virtmap_init(void)
+{
+	efi_memory_desc_t *md;
+
+	if (!efi_enabled(EFI_BOOT))
+		return;
+
+	for_each_efi_memory_desc(&memmap, md) {
+		u64 paddr, npages, size;
+		pgprot_t prot;
+
+		if (!(md->attribute & EFI_MEMORY_RUNTIME))
+			continue;
+		if (WARN(md->virt_addr == 0,
+			 "UEFI virtual mapping incomplete or missing -- no entry found for 0x%llx\n",
+			 md->phys_addr))
+			return;
+
+		paddr = md->phys_addr;
+		npages = md->num_pages;
+		memrange_efi_to_native(&paddr, &npages);
+		size = npages << PAGE_SHIFT;
+
+		pr_info("  EFI remap 0x%016llx => %p\n",
+			md->phys_addr, (void *)md->virt_addr);
+
+		/*
+		 * Only regions of type EFI_RUNTIME_SERVICES_CODE need to be
+		 * executable, everything else can be mapped with the XN bits
+		 * set.
+		 */
+		if (!is_normal_ram(md))
+			prot = __pgprot(PROT_DEVICE_nGnRE);
+		else if (md->type == EFI_RUNTIME_SERVICES_CODE)
+			prot = PAGE_KERNEL_EXEC;
+		else
+			prot = PAGE_KERNEL;
+
+		create_pgd_mapping(&efi_mm, paddr, md->virt_addr, size, prot);
+	}
+	set_bit(EFI_VIRTMAP, &efi.flags);
+	early_memunmap(memmap.map, memmap.map_end - memmap.map);
+}

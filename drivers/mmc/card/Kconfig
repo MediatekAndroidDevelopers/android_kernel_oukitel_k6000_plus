@@ -77,14 +77,6 @@ config MMC_FFU
 	  Field firmware updates (FFU) enables features enhancment
 	  in the field.
 
-config MMC_BLOCK_IO_LOG
-	bool "Block IO log"
-	depends on MMC_BLOCK
-	default y
-	help
-	  Enable IO trace for performance analysis and application access
-	  pattern study.
-
 config MMC_SIMULATE_MAX_SPEED
 	bool "Turn on maximum speed control per block device"
 	depends on MMC_BLOCK

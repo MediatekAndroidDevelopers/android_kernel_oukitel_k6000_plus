@@ -143,7 +143,7 @@ struct zpool *zpool_create_pool(char *type, char *name, gfp_t gfp,
 
 	zpool->type = driver->type;
 	zpool->driver = driver;
-	zpool->pool = driver->create(name, gfp, ops, zpool);
+	zpool->pool = driver->create(name, gfp, ops);
 	zpool->ops = ops;
 
 	if (!zpool->pool) {

@@ -138,8 +138,7 @@ static struct zbud_ops zbud_zpool_ops = {
 };
 
 static void *zbud_zpool_create(char *name, gfp_t gfp,
-			       struct zpool_ops *zpool_ops,
-			       struct zpool *zpool)
+			struct zpool_ops *zpool_ops)
 {
 	struct zbud_pool *pool;
 
