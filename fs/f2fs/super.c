@@ -816,7 +816,7 @@ static void f2fs_put_super(struct super_block *sb)
 	}
 
 	/* be sure to wait for any on-going discard commands */
-	f2fs_wait_discard_bios(sbi, true);
+	f2fs_wait_discard_bios(sbi);
 
 	if (f2fs_discard_en(sbi) && !sbi->discard_blks) {
 		struct cp_control cpc = {
@@ -1169,8 +1169,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
 	char *s_qf_names[F2FS_MAXQUOTAS];
 	int i, j;
 #endif
-
-	sync_filesystem(sb);
 
 	/*
 	 * Save the old mount options in case we

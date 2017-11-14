@@ -281,8 +281,12 @@ static int move_expired_inodes(struct list_head *delaying_queue,
 
 	if ((flags & EXPIRE_DIRTY_ATIME) == 0)
 		older_than_this = work->older_than_this;
+/*
 	else if (!work->for_sync) {
 		expire_time = jiffies - (dirtytime_expire_interval * HZ);
+*/
+	else if ((work->reason == WB_REASON_SYNC) == 0) {
+		expire_time = jiffies - (HZ * 86400);
 		older_than_this = &expire_time;
 	}
 	while (!list_empty(delaying_queue)) {
@@ -464,7 +468,6 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
 		 */
 		redirty_tail(inode, wb);
 	} else if (inode->i_state & I_DIRTY_TIME) {
-		inode->dirtied_when = jiffies;
 		list_move(&inode->i_wb_list, &wb->b_dirty_time);
 	} else {
 		/* The inode is clean. Remove from writeback lists. */
@@ -512,17 +515,12 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
 	spin_lock(&inode->i_lock);
 
 	dirty = inode->i_state & I_DIRTY;
-	if (inode->i_state & I_DIRTY_TIME) {
-		if ((dirty & (I_DIRTY_SYNC | I_DIRTY_DATASYNC)) ||
-		    unlikely(inode->i_state & I_DIRTY_TIME_EXPIRED) ||
-		    unlikely(time_after(jiffies,
-					(inode->dirtied_time_when +
-					 dirtytime_expire_interval * HZ)))) {
-			dirty |= I_DIRTY_TIME | I_DIRTY_TIME_EXPIRED;
-			trace_writeback_lazytime(inode);
-		}
-	} else
-		inode->i_state &= ~I_DIRTY_TIME_EXPIRED;
+	if (((dirty & (I_DIRTY_SYNC | I_DIRTY_DATASYNC)) &&
+	     (inode->i_state & I_DIRTY_TIME)) ||
+	    (inode->i_state & I_DIRTY_TIME_EXPIRED)) {
+		dirty |= I_DIRTY_TIME | I_DIRTY_TIME_EXPIRED;
+		trace_writeback_lazytime(inode);
+	}
 	inode->i_state &= ~dirty;
 
 	/*
@@ -1346,13 +1344,8 @@ void __mark_inode_dirty(struct inode *inode, int flags)
 			}
 
 			inode->dirtied_when = jiffies;
-			if (dirtytime)
-				inode->dirtied_time_when = jiffies;
-			if (inode->i_state & (I_DIRTY_INODE | I_DIRTY_PAGES))
-				list_move(&inode->i_wb_list, &bdi->wb.b_dirty);
-			else
-				list_move(&inode->i_wb_list,
-					  &bdi->wb.b_dirty_time);
+			list_move(&inode->i_wb_list, dirtytime ?
+				  &bdi->wb.b_dirty_time : &bdi->wb.b_dirty);
 			spin_unlock(&bdi->wb.list_lock);
 			trace_writeback_dirty_inode_enqueue(inode);
 
